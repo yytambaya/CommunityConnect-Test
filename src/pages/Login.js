@@ -1,9 +1,14 @@
+import { useNavigate } from "react-router-dom";
+
 const Login = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full relative bg-primary-700 overflow-hidden flex flex-row items-start justify-start pt-1.5 px-[30px] pb-20 box-border gap-[259px] leading-[normal] tracking-[normal] mq725:gap-[65px] mq450:gap-[32px] mq975:flex-wrap mq1000:gap-[129px]">
       <div className="w-[181px] flex flex-col items-start justify-start pt-[24.1px] px-0 pb-0 box-border">
         <img
-          className="self-stretch h-[47px] relative max-w-full overflow-hidden shrink-0 object-cover"
+          onClick={() => navigate("/")}
+          className="cursor-pointer self-stretch h-[47px] relative max-w-full overflow-hidden shrink-0 object-cover"
           loading="lazy"
           alt=""
           src="/asset-4-1-1@2x.png"
@@ -11,11 +16,11 @@ const Login = () => {
       </div>
       <div className="w-[500px] flex flex-col items-end justify-start gap-[30px] min-w-[500px] max-w-full mq725:min-w-full mq975:flex-1">
         <header className="self-stretch flex flex-row items-start justify-center py-0 px-5 text-center text-xs text-primary-900 font-paragraph-medium-medium">
-          <div className="rounded-md bg-secondary-100 flex flex-row items-start justify-start py-3 px-6 whitespace-nowrap">
+          {/*<div className="rounded-md bg-secondary-100 flex flex-row items-start justify-start py-3 px-6 whitespace-nowrap">
             <div className="relative leading-[20px] font-medium">
               Your email was confirmed, please try signing in
             </div>
-          </div>
+          </div>*/}
         </header>
         <form className="m-0 self-stretch shadow-[0px_4px_8px_rgba(0,_0,_0,_0.25)] rounded-xl bg-generic-white box-border overflow-hidden flex flex-col items-start justify-start pt-[34px] px-[59px] pb-[74px] gap-[24px] max-w-full border-[1px] border-solid border-neutral-300 mq725:pl-[29px] mq725:pr-[29px] mq725:box-border mq450:pt-5 mq450:pb-[31px] mq450:box-border mq975:pt-[22px] mq975:pb-12 mq975:box-border">
           <div className="self-stretch flex flex-row items-start justify-center">
@@ -88,6 +93,19 @@ const Login = () => {
                 <div className="relative text-base leading-[24px] font-medium font-paragraph-medium-medium text-primary-900 text-left inline-block min-w-[109px]">
                   Email Address
                 </div>
+                <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-start py-3 px-4 border-[1px] border-solid border-neutral-100">
+                  <input
+                    className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-primary-900 text-left inline-block whitespace-nowrap p-0"
+                    placeholder="example@gmail.com"
+                    type="email"
+                  />
+                </div>
+              </div>
+              
+              {/*<div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
+                <div className="relative text-base leading-[24px] font-medium font-paragraph-medium-medium text-primary-900 text-left inline-block min-w-[109px]">
+                  Email Address
+                </div>
                 <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
                   <input
                     className="w-[136px] [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400 text-left inline-block whitespace-nowrap p-0"
@@ -95,9 +113,21 @@ const Login = () => {
                     type="text"
                   />
                 </div>
-              </div>
+              </div>*/}
               <div className="self-stretch flex flex-col items-start justify-start gap-[4px]">
                 <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
+                  <div className="relative text-base leading-[24px] font-medium font-paragraph-medium-medium text-primary-900 text-left inline-block min-w-[109px]">
+                    Password
+                  </div>
+                  <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-start py-3 px-4 border-[1px] border-solid border-neutral-100">
+                    <input
+                      className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-primary-900 text-left inline-block whitespace-nowrap p-0"
+                      placeholder="****"
+                      type="password"
+                    />
+                  </div>
+                </div>
+                  {/*<div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
                   <input
                     className="w-[75px] [border:none] [outline:none] font-medium font-paragraph-medium-medium text-base bg-[transparent] h-6 relative leading-[24px] text-primary-900 text-left inline-block p-0"
                     placeholder="Password"
@@ -122,7 +152,7 @@ const Login = () => {
                       src="/frame.svg"
                     />
                   </div>
-                </div>
+                </div>*/}
                 <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-neutral-800 text-left">
                   Your password must be at least 6 characters
                 </div>
@@ -139,13 +169,13 @@ const Login = () => {
                     Remember me
                   </div>
                 </div>
-                <div className="relative text-xs [text-decoration:underline] leading-[20px] font-medium font-paragraph-medium-medium text-primary-900 text-left inline-block min-w-[103px]">
+                <div onClick={() => navigate("/forgot-password")} className=" cursor-pointer relative text-xs [text-decoration:underline] leading-[20px] font-medium font-paragraph-medium-medium text-primary-900 text-left inline-block min-w-[103px]">
                   Forgot password?
                 </div>
               </div>
             </div>
             <div className="self-stretch flex flex-col items-start justify-start gap-[16px]">
-              <button className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-start justify-center hover:bg-slateblue">
+              <button onClick={() => navigate("/app/events")} className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-start justify-center hover:bg-slateblue">
                 <div className="relative text-base leading-[24px] font-semibold font-paragraph-medium-medium text-generic-white text-left inline-block min-w-[43px]">
                   Login
                 </div>
@@ -168,7 +198,7 @@ const Login = () => {
               <div className="relative text-base leading-[24px] font-medium font-paragraph-medium-medium text-neutral-900 text-left">
                 Already have an account?
               </div>
-              <div className="relative text-base [text-decoration:underline] leading-[24px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[58px] whitespace-nowrap">
+              <div onClick={() => navigate('/signup')} className="cursor-pointer relative text-base [text-decoration:underline] leading-[24px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[58px] whitespace-nowrap">
                 Sign up
               </div>
             </div>

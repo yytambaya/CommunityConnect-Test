@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Community = () => {
+const CreateCommunity = () => {
   const navigate = useNavigate();
 
   const onFrameContainerClick = useCallback(() => {
@@ -297,4 +297,4 @@ const Community = () => {
   );
 };
 
-export default Community;
+export default CreateCommunity;

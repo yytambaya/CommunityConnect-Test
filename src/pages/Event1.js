@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Event1 = () => {
+const CreateEvent = () => {
   const navigate = useNavigate();
 
   const onFrameContainerClick = useCallback(() => {
-    navigate("/events");
+    navigate("/app/events");
   }, [navigate]);
 
   return (
@@ -66,6 +66,7 @@ const Event1 = () => {
             onClick={onFrameContainerClick}
           >
             <img
+              
               className="h-[30px] w-[30px] relative rounded-81xl overflow-hidden shrink-0 min-h-[30px]"
               alt=""
               src="/frame-123-23.svg"
@@ -330,12 +331,12 @@ const Event1 = () => {
             </div>
           </div>
           <div className="self-stretch flex flex-col items-start justify-start gap-[16px]">
-            <button className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-center justify-center whitespace-nowrap hover:bg-slateblue">
+            <button onClick={() => navigate('/app/event/event-preview')} className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-center justify-center whitespace-nowrap hover:bg-slateblue">
               <div className="relative text-base leading-[24px] font-semibold font-paragraph-medium-medium text-generic-white text-left inline-block min-w-[119px]">
                 Submit request
               </div>
             </button>
-            <button className="cursor-pointer py-2.5 px-5 bg-primary-50 self-stretch rounded-md flex flex-row items-center justify-center border-[1px] border-solid border-primary-100 hover:bg-thistle-100 hover:box-border hover:border-[1px] hover:border-solid hover:border-thistle-200">
+            <button onClick={() => navigate("/app/events")} className="cursor-pointer py-2.5 px-5 bg-primary-50 self-stretch rounded-md flex flex-row items-center justify-center border-[1px] border-solid border-primary-100 hover:bg-thistle-100 hover:box-border hover:border-[1px] hover:border-solid hover:border-thistle-200">
               <div className="relative text-base leading-[24px] font-semibold font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[54px]">
                 Cancel
               </div>
@@ -347,4 +348,4 @@ const Event1 = () => {
   );
 };
 
-export default Event1;
+export default CreateEvent;

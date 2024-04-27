@@ -9,7 +9,7 @@ const Events2 = () => {
   }, [navigate]);
 
   return (
-    <div className="w-full h-[1139px] relative bg-generic-white overflow-hidden leading-[normal] tracking-[normal] text-left text-base text-neutral-500 font-paragraph-medium-medium mq650:h-auto mq650:min-h-[1139]">
+    <div className="w-full h-[1439px] relative bg-generic-white overflow-hidden leading-[normal] tracking-[normal] text-left text-base text-neutral-500 font-paragraph-medium-medium mq650:h-auto mq650:min-h-[1139]">
       <img
         className="absolute top-[0px] left-[0px] w-[1440px] h-[990px] object-cover hidden"
         alt=""
@@ -77,7 +77,7 @@ const Events2 = () => {
       </div>
       <main className="absolute top-[56px] left-[331px] w-[1109px] overflow-hidden flex flex-col items-start justify-start pt-[22px] px-[34px] pb-0 box-border gap-[30px] max-w-full text-left text-5xl text-primary-900 font-paragraph-medium-medium">
         <img
-          className="w-[1012px] relative rounded-md max-h-full overflow-hidden object-cover max-w-full"
+          className="w-[1012px] relative rounded-md h-[400px] overflow-hidden object-cover max-w-full"
           alt=""
           src="/tags-t-e-x-t@2x.png"
         />
@@ -227,7 +227,7 @@ const Events2 = () => {
             </div>
           </div>
         </div>
-        <div className="w-[1012px] h-[51px] flex flex-col items-start justify-start pt-0 px-0 pb-[19px] box-border gap-[16px] max-w-full">
+        {/*<div className="w-[1012px] h-[51px] flex flex-col items-start justify-start pt-0 px-0 pb-[19px] box-border gap-[16px] max-w-full">
           <h3 className="m-0 w-[185px] h-8 relative text-inherit tracking-[-0.02em] leading-[32px] font-semibold font-inherit inline-block shrink-0 [debug_commit:1de1738] mq450:text-lgi mq450:leading-[26px]">
             About this event
           </h3>
@@ -238,9 +238,9 @@ const Events2 = () => {
             beauty. Let's create unforgettable memories together in a blissful
             setting. Don't miss out – reserve your spot now!"
           </div>
-        </div>
+        </div>*/}
       </main>
-      <header className="absolute top-[0px] left-[calc(50%_-_720px)] bg-primary-700 w-full overflow-hidden flex flex-row items-start justify-start py-0 pr-0 pl-[50px] box-border max-w-full z-[1] text-left text-base text-generic-white font-paragraph-medium-medium mq725:pl-[25px] mq725:box-border">
+      <header className="absolute top-[0px] left-[0px] right-[0px] bg-primary-700 w-full overflow-hidden flex flex-row items-start justify-start py-0 pr-0 pl-[50px] box-border max-w-full z-[1] text-left text-base text-generic-white font-paragraph-medium-medium mq725:pl-[25px] mq725:box-border">
         <div className="w-[280px] flex flex-col items-start justify-start pt-[11px] px-0 pb-0 box-border">
           <img
             className="w-[131px] h-[34px] relative object-contain"

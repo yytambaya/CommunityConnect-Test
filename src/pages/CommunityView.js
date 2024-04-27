@@ -2,7 +2,7 @@ import FrameComponent1 from "../components/FrameComponent11";
 import FrameComponent from "../components/FrameComponent6";
 import TopBar from "../components/TopBar2";
 
-const Community = () => {
+const CommunityView = () => {
   return (
     <div className="w-full relative bg-generic-white overflow-hidden flex flex-col items-start justify-start leading-[normal] tracking-[normal] text-left text-xl text-neutral-900 font-paragraph-medium-medium">
       <img
@@ -429,4 +429,4 @@ const Community = () => {
   );
 };
 
-export default Community;
+export default CommunityView;

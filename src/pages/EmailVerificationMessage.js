@@ -1,9 +1,9 @@
-const Signup2 = () => {
+const EmailVerificationMessage = () => {
   return (
     <div className="w-full relative bg-primary-700 overflow-hidden flex flex-row items-start justify-start pt-1.5 px-[30px] pb-[565px] box-border gap-[203px] leading-[normal] tracking-[normal] text-left text-5xl text-neutral-900 font-paragraph-medium-medium mq450:gap-[25px] mq725:gap-[51px] mq1050:flex-wrap mq1050:gap-[101px]">
       <div className="w-[181px] flex flex-col items-start justify-start pt-[24.1px] px-0 pb-0 box-border">
         <img
-          className="self-stretch h-[47px] relative max-w-full overflow-hidden shrink-0 object-cover"
+          className="cursor-pointer  self-stretch h-[47px] relative max-w-full overflow-hidden shrink-0 object-cover"
           loading="lazy"
           alt=""
           src="/asset-4-1-1@2x.png"
@@ -56,4 +56,4 @@ const Signup2 = () => {
   );
 };
 
-export default Signup2;
+export default EmailVerificationMessage;

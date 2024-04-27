@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ForgotPassword1 = () => {
+const ForgotPasswordMessage = () => {
   const navigate = useNavigate();
 
   const onForgotPasswordContainer1Click = useCallback(() => {
-    navigate("/forgot-password");
+    navigate("/forgot-password-message");
   }, [navigate]);
 
   return (
@@ -26,9 +26,10 @@ const ForgotPassword1 = () => {
           </div>
         </div>
       </div>
-      <header className="self-stretch flex flex-col items-start justify-start gap-[31.9px] max-w-full shrink-0 text-left text-5xl text-neutral-900 font-paragraph-medium-medium mq650:gap-[16px]">
+      <header className="w-full self-stretch flex flex-col items-start justify-start gap-[31.9px] max-w-full shrink-0 text-left text-5xl text-neutral-900 font-paragraph-medium-medium mq650:gap-[16px]">
         <img
-          className="w-[181px] h-[47px] relative object-cover"
+          onClick={() => navigate("/login")}
+          className="cursor-pointer w-[181px] h-[47px] relative object-cover"
           loading="lazy"
           alt=""
           src="/asset-4-1-1@2x.png"
@@ -40,7 +41,20 @@ const ForgotPassword1 = () => {
                 Forgot your password?
               </h1>
             </div>
-            <div className="relative text-base leading-[24px] text-center text-primary-900">
+            <div className="w-full relative text-base leading-[24px] text-center text-primary-900">
+              {/*<div className="w-full self-stretch flex flex-col items-start justify-start gap-[12px]">
+                <div className="relative text-base leading-[24px] font-medium font-paragraph-medium-medium text-primary-900 text-left inline-block min-w-[109px]">
+                  Password
+                </div>
+                <div className="w-full self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-start py-3 px-4 border-[1px] border-solid border-neutral-100">
+                  <input
+                    className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-primary-900 text-left inline-block whitespace-nowrap p-0"
+                    placeholder="johndoe@gmail.com"
+                    type="email"
+                  />
+                </div>
+              </div>*/}
+              
               <p className="m-0">
                 <span className="font-paragraph-medium-medium text-primary-900">{`We just emailed a reset link to `}</span>
                 <span className="font-semibold font-paragraph-medium-medium text-primary-500">
@@ -59,4 +73,4 @@ const ForgotPassword1 = () => {
   );
 };
 
-export default ForgotPassword1;
+export default ForgotPasswordMessage;

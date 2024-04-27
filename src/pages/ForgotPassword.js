@@ -1,11 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import LargeButtonSendLink from "../components/LargeButtonSendLink";
 
 const ForgotPassword = () => {
+  const navigate = useNavigate()
+
   return (
     <div className="w-full relative bg-primary-700 overflow-hidden flex flex-row items-start justify-start pt-0 px-[30px] pb-[475px] box-border gap-[280px] leading-[normal] tracking-[normal] text-center text-xs text-primary-900 font-paragraph-medium-medium mq975:flex-wrap mq975:gap-[140px] mq700:gap-[70px]">
       <div className="w-[181px] flex flex-col items-start justify-start pt-[30.1px] px-0 pb-0 box-border">
         <img
-          className="self-stretch h-[47px] relative max-w-full overflow-hidden shrink-0 object-cover"
+          onClick={() => navigate("/")}
+          className="cursor-pointer self-stretch h-[47px] relative max-w-full overflow-hidden shrink-0 object-cover"
           loading="lazy"
           alt=""
           src="/asset-4-1-1@2x.png"

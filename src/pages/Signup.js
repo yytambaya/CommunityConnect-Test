@@ -1,10 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import FrameComponent from "../components/FrameComponent";
 
 const Signup = () => {
+  const navigate = useNavigate()
+
   return (
     <div className="w-full relative bg-primary-700 overflow-hidden flex flex-row items-start justify-start pt-[30.1px] px-[30px] pb-[59px] box-border gap-[259px] leading-[normal] tracking-[normal] mq725:gap-[65px] mq450:gap-[32px] mq975:flex-wrap mq1000:gap-[129px]">
       <img
-        className="h-[47px] w-[181px] relative object-contain"
+        onClick={() => navigate("/")}
+        className="cursor-pointer h-[47px] w-[181px] relative object-contain"
         loading="lazy"
         alt=""
         src="/asset-4-1-1@2x.png"

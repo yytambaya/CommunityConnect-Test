@@ -2,7 +2,7 @@ import FrameComponent1 from "../components/FrameComponent12";
 import FrameComponent from "../components/FrameComponent7";
 import TopBar from "../components/TopBar3";
 
-const Profile = () => {
+const ProfileOverview = () => {
   return (
     <div className="w-full h-[960px] relative bg-generic-white overflow-hidden leading-[normal] tracking-[normal] text-left text-lg text-gray-100 font-paragraph-medium-medium mq450:h-auto mq450:min-h-[960]">
       <img
@@ -154,4 +154,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ProfileOverview;

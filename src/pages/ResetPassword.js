@@ -1,9 +1,14 @@
-const ForgotPassword3 = () => {
+import { useNavigate } from "react-router-dom";
+
+const ResetPassword = () => {
+  const navigate = useNavigate()
+
   return (
     <div className="w-full relative bg-primary-700 overflow-hidden flex flex-row items-start justify-start pt-0 px-[30px] pb-[375px] box-border gap-[280px] leading-[normal] tracking-[normal] text-center text-xs text-primary-900 font-paragraph-medium-medium mq975:flex-wrap mq975:gap-[140px] mq700:gap-[70px]">
       <div className="w-[181px] flex flex-col items-start justify-start pt-[30.1px] px-0 pb-0 box-border">
         <img
-          className="self-stretch h-[47px] relative max-w-full overflow-hidden shrink-0 object-cover"
+          onClick={() => navigate("/")}
+          className="cursor-pointer self-stretch h-[47px] relative max-w-full overflow-hidden shrink-0 object-cover"
           loading="lazy"
           alt=""
           src="/asset-4-1-1@2x.png"
@@ -36,7 +41,33 @@ const ForgotPassword3 = () => {
                 </div>
               </div>
               <div className="self-stretch flex flex-col items-start justify-start gap-[16px]">
-                <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
+              <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
+              <div className="relative text-base leading-[24px] font-medium font-paragraph-medium-medium text-primary-900 text-left inline-block min-w-[109px]">
+                New Password
+              </div>
+              <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-start py-3 px-4 border-[1px] border-solid border-neutral-100">
+                <input
+                  className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-primary-900 text-left inline-block whitespace-nowrap p-0"
+                  placeholder="****"
+                  type="password"
+                />
+              </div>
+            </div>
+
+            <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
+              <div className="relative text-base leading-[24px] font-medium font-paragraph-medium-medium text-primary-900 text-left inline-block min-w-[109px]">
+                Confirm Password
+              </div>
+              <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-start py-3 px-4 border-[1px] border-solid border-neutral-100">
+                <input
+                  className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-primary-900 text-left inline-block whitespace-nowrap p-0"
+                  placeholder="****"
+                  type="password"
+                />
+              </div>
+            </div>
+                
+                {/*<div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
                   <input
                     className="w-[114px] [border:none] [outline:none] font-medium font-paragraph-medium-medium text-base bg-[transparent] h-6 relative leading-[24px] text-primary-900 text-left inline-block p-0"
                     placeholder="New Password"
@@ -61,8 +92,8 @@ const ForgotPassword3 = () => {
                       src="/large-button.svg"
                     />
                   </div>
-                </div>
-                <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
+                </div>*/}
+                {/*<div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
                   <input
                     className="w-[141px] [border:none] [outline:none] font-medium font-paragraph-medium-medium text-base bg-[transparent] h-6 relative leading-[24px] text-primary-900 text-left inline-block p-0"
                     placeholder="Confirm Password"
@@ -87,10 +118,10 @@ const ForgotPassword3 = () => {
                       src="/large-button.svg"
                     />
                   </div>
-                </div>
+                </div>*/}
               </div>
             </div>
-            <button className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-start justify-center whitespace-nowrap hover:bg-slateblue">
+            <button onClick={() => navigate("/password-reset-message")} className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-start justify-center whitespace-nowrap hover:bg-slateblue">
               <div className="relative text-base leading-[24px] font-semibold font-paragraph-medium-medium text-gray-300 text-left">
                 Change password
               </div>
@@ -102,4 +133,4 @@ const ForgotPassword3 = () => {
   );
 };
 
-export default ForgotPassword3;
+export default ResetPassword;

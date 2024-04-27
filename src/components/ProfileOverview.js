@@ -1,8 +1,8 @@
-const Profile1 = () => {
+const ProfileOverview = () => {
   return (
-    <form className="m-0 w-[1440px] h-[960px] bg-generic-white max-w-full overflow-hidden leading-[normal] tracking-[normal]">
+    <form className="m-0 w-full h-[960px] bg-generic-white max-w-full overflow-hidden leading-[normal] tracking-[normal]">
       <img
-        className="absolute top-[0px] left-[0px] w-[1440px] h-[990px] object-cover hidden"
+        className="absolute top-[0px] left-[0px] w-full h-[990px] object-cover hidden"
         alt=""
         src="/image-3@2x.png"
       />
@@ -71,6 +71,7 @@ const Profile1 = () => {
           </div>
         </div>
       </div>
+      
       <div className="absolute top-[0px] left-[330px] bg-generic-white box-border w-[1110px] h-14 overflow-hidden hidden border-b-[1px] border-solid border-neutral-300 border-l-[1px]">
         <div className="absolute top-[13px] left-[24px] text-base leading-[24px] font-medium font-paragraph-medium-medium text-primary-900 text-left inline-block min-w-[49px]">
           Profile
@@ -241,4 +242,4 @@ const Profile1 = () => {
   );
 };
 
-export default Profile1;
+export default ProfileOverview;

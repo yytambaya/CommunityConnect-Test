@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 const LargeButtonSendLink = () => {
+  const navigate = useNavigate()
+  
   return (
     <div className="flex-1 rounded-md bg-generic-white flex flex-col items-center justify-start py-10 px-6 box-border gap-[30px] shrink-0 [debug_commit:1de1738] max-w-full text-left text-5xl text-neutral-900 font-paragraph-medium-medium mq450:gap-[15px] mq450:pt-[26px] mq450:pb-[26px] mq450:box-border">
       <div className="self-stretch flex flex-col items-center justify-start gap-[24px]">
@@ -22,7 +26,7 @@ const LargeButtonSendLink = () => {
           />
         </div>
       </div>
-      <button className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-center justify-center whitespace-nowrap hover:bg-slateblue">
+      <button onClick={ () => navigate('/forgot-password-message')} className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-center justify-center whitespace-nowrap hover:bg-slateblue">
         <div className="relative text-base leading-[24px] font-semibold font-paragraph-medium-medium text-gray-300 text-left inline-block min-w-[86px]">
           Send email
         </div>

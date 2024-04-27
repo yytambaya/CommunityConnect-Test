@@ -1,7 +1,7 @@
 import TopBar from "../components/TopBar1";
 import FrameComponent from "../components/FrameComponent5";
 
-const Events = () => {
+const EventPreview = () => {
   return (
     <div className="w-full relative bg-generic-white overflow-hidden flex flex-col items-end justify-start pt-0 px-0 pb-[60px] box-border gap-[24px] leading-[normal] tracking-[normal]">
       <img
@@ -185,4 +185,4 @@ const Events = () => {
   );
 };
 
-export default Events;
+export default EventPreview;

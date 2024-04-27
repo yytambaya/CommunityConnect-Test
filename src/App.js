@@ -6,45 +6,49 @@ import {
   useLocation,
 } from "react-router-dom";
 import Signup from "./pages/Signup";
-import Signup1 from "./pages/Signup1";
+import EmailVerificationMessage from "./pages/EmailVerificationMessage";
 import Login from "./pages/Login";
-import Login1 from "./pages/Login1";
-import Signup2 from "./pages/Signup2";
+// import Login1 from "./pages/Login1";*/}yyy
+// import Signup2 from "./pages/EmailVerificationMessage";
 import ForgotPassword from "./pages/ForgotPassword";
-import ForgotPassword1 from "./pages/ForgotPassword1";
-import ForgotPassword2 from "./pages/ForgotPassword2";
-import ForgotPassword3 from "./pages/ForgotPassword3";
+import ForgotPasswordMessage from "./pages/ForgotPasswordMessage";
+import ResetPassword from "./pages/ResetPassword";
+import ResetPasswordMessage from "./pages/ResetPasswordMessage";
 import Events1 from "./pages/Events1";
-import Events2 from "./pages/Events2";
+import SingleEvent from "./pages/SingleEvent";
 import Events3 from "./pages/Events3";
 import Explore from "./pages/Explore";
-import Explore from "./pages/Explore1";
+import Explore1 from "./pages/Explore1";
+import Eventsww from "./pages/Eventsww";
 import Events from "./pages/Events";
-import Events1 from "./pages/Events11";
-import Events2 from "./pages/Events21";
-import Events3 from "./pages/Events31";
-import Events from "./pages/Events4";
+import Events21 from "./pages/Events21";
+import Events31 from "./pages/Events31";
+import Events4 from "./pages/EventsPreview";
+import SingleEvent22 from "./pages/SingleEvent22";
 import Post from "./pages/Post";
-import Community from "./pages/Community";
-import Community from "./pages/Community1";
-import Profile from "./pages/Profile";
+import CreateCommunity from "./pages/CreateCommunity";
+import CommunityView from "./pages/CommunityView";
+import Profile from "./pages/ProfilePersonal";
 import Profile3 from "./pages/Profile3";
-import Profile from "./pages/Profile1";
+import Profile1 from "./pages/ProfileOverview2";
 import Event1 from "./pages/Event1";
-import Events from "./pages/Events5";
-import Events1 from "./pages/Events12";
-import Event1 from "./pages/Event11";
+import Events5 from "./pages/Events5";
+import Events12 from "./pages/Events12";
+import Event11 from "./pages/Event11";
 import Event2 from "./pages/Event2";
 import Event3 from "./pages/Event3";
-import Event4 from "./pages/Event4";
+import EventPreview from "./pages/EventsPreview";
 import Event5 from "./pages/Event5";
 import LandingPage from "./pages/LandingPage";
-import Events from "./pages/Events6";
+import Events6 from "./pages/Events6";
 import Profile4 from "./pages/Profile4";
 import Profile5 from "./pages/Profile5";
 import Profile6 from "./pages/Profile6";
-import Profile from "./pages/Profile2";
+import Profile2 from "./pages/Profile2";
 import Profile7 from "./pages/Profile7";
+import CreateEvent from "./pages/Event1";
+import ProfileOverview from "./pages/ProfileOverview";
+import ProfilePersonal from "./pages/ProfilePersonal";
 
 function App() {
   const action = useNavigationType();
@@ -240,43 +244,49 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Signup />} />
-      <Route path="/signup1" element={<Signup1 />} />
+      <Route path="/" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/login1" element={<Login1 />} />
-      <Route path="/signup" element={<Signup2 />} />
-      <Route path="/forgot-password1" element={<ForgotPassword />} />
-      <Route path="/forgot-password2" element={<ForgotPassword1 />} />
-      <Route path="/forgot-password3" element={<ForgotPassword2 />} />
-      <Route path="/forgot-password" element={<ForgotPassword3 />} />
+      <Route path="/verification-message" element={<EmailVerificationMessage />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/forgot-password-message" element={<ForgotPasswordMessage />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/password-reset-message" element={<ResetPasswordMessage />} />
+
       <Route path="/events3" element={<Events1 />} />
-      <Route path="/events4" element={<Events2 />} />
+      <Route path="/event/details" element={<SingleEvent />} />
       <Route path="/events5" element={<Events3 />} />
-      <Route path="/explore1" element={<Explore />} />
-      <Route path="/explore" element={<Explore />} />
-      <Route path="/events6" element={<Events />} />
-      <Route path="/events2" element={<Events1 />} />
-      <Route path="/events1" element={<Events2 />} />
-      <Route path="/events7" element={<Events3 />} />
-      <Route path="/events8" element={<Events />} />
-      <Route path="/post1" element={<Post />} />
-      <Route path="/community" element={<Community />} />
-      <Route path="/community1" element={<Community />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/profile1" element={<Profile3 />} />
-      <Route path="/profile2" element={<Profile />} />
-      <Route path="/event" element={<Event1 />} />
-      <Route path="/events9" element={<Events />} />
+      <Route path="/app/create-event" element={<CreateEvent />} />
+      <Route path="/eventsww" element={<Events />} />
       <Route path="/events10" element={<Events1 />} />
       <Route path="/event1" element={<Event1 />} />
       <Route path="/event2" element={<Event2 />} />
       <Route path="/event3" element={<Event3 />} />
-      <Route path="/event4" element={<Event4 />} />
+      <Route path="/app/event/event-preview" element={<EventPreview />} />
       <Route path="/event5" element={<Event5 />} />
+      <Route path="/app/events" element={<Events />} />
+
+      <Route path="/app/create-community" element={<CreateCommunity />} />
+      <Route path="/app/community-view" element={<CommunityView />} />
+      
+      
+      <Route path="/explore1" element={<Explore1 />} />
+      <Route path="/explore" element={<Explore />} />
+      <Route path="/events6" element={<Events />} />
+      <Route path="/events2" element={<Events1 />} />
+      <Route path="/events1" element={<SingleEvent22 />} />
+      <Route path="/events7" element={<Events3 />} />
+      <Route path="/events8" element={<Events />} />
+      <Route path="/post1" element={<Post />} />
+      
       <Route path="/landing-page" element={<LandingPage />} />
-      <Route path="/events11" element={<Events />} />
-      <Route path="/profile3" element={<Profile4 />} />
-      <Route path="/profile4" element={<Profile5 />} />
+
+      <Route path="/app/profile" element={<ProfileOverview />} />
+      <Route path="/app/profile/personal-details" element={<ProfilePersonal />} />
+      <Route path="/mentor-basic" element={<Profile3 />} />
+      <Route path="/profile2" element={<Profile />} />
+      <Route path="/pro" element={<Profile4 />} />
+      <Route path="/mentor-premium" element={<Profile5 />} />
       <Route path="/profile5" element={<Profile6 />} />
       <Route path="/profile6" element={<Profile />} />
       <Route path="/profile7" element={<Profile7 />} />

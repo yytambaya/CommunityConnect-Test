@@ -1,11 +1,16 @@
-const ForgotPassword2 = () => {
+import { useNavigate } from "react-router-dom";
+
+const ResetPasswordMessage = () => {
+  const navigate = useNavigate() 
+  
   return (
     <div className="w-full relative bg-primary-700 overflow-hidden flex flex-col items-end justify-start pt-1.5 pb-[613px] pr-[412px] pl-[30px] box-border gap-[31.9px] leading-[normal] tracking-[normal] text-left text-5xl text-neutral-900 font-paragraph-medium-medium mq450:pr-5 mq450:box-border mq725:gap-[16px] mq725:pr-[206px] mq725:box-border">
       <header className="self-stretch flex flex-row items-start justify-start max-w-full">
         <div className="w-[847.5px] flex flex-row items-start justify-between gap-[20px] max-w-full mq450:w-[533.5px]">
           <div className="w-[181px] flex flex-col items-start justify-start pt-[24.1px] px-0 pb-0 box-border">
             <img
-              className="self-stretch h-[47px] relative max-w-full overflow-hidden shrink-0 object-cover"
+              onClick={() => navigate("/")}
+              className="cursor-pointer self-stretch h-[47px] relative max-w-full overflow-hidden shrink-0 object-cover"
               loading="lazy"
               alt=""
               src="/asset-4-1-1@2x.png"
@@ -31,7 +36,7 @@ const ForgotPassword2 = () => {
           </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-center max-w-full">
-          <button className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 w-[380px] rounded-md flex flex-row items-start justify-center box-border whitespace-nowrap max-w-full hover:bg-slateblue">
+          <button onClick={() => navigate("/login")} className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 w-[380px] rounded-md flex flex-row items-start justify-center box-border whitespace-nowrap max-w-full hover:bg-slateblue">
             <div className="relative text-base leading-[24px] font-semibold font-paragraph-medium-medium text-generic-white text-left">
               Continue to login
             </div>
@@ -42,4 +47,4 @@ const ForgotPassword2 = () => {
   );
 };
 
-export default ForgotPassword2;
+export default ResetPasswordMessage;
