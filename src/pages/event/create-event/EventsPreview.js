@@ -1,14 +1,125 @@
 import TopBar from "../../../components/TopBar1";
 import FrameComponent from "../../../components/FrameComponent5";
-import { useContext, useEffect } from "react";
-import { EventContextProvider } from "../../../contexts/EventProvider";
+import { useContext, useEffect, useState } from "react";
+import { EventContextProvider, useEventContext } from "../../../contexts/EventProvider";
+import EditEvent from "./EditEvent";
+import { addDocToFirestore } from "../../../api/crud/firebaseCrud";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../../configs/firebase.config";
 
-const EventPreview = () => {
-  const event = useContext(EventContextProvider)
+const EventPreview = ({page, setPage}) => {
+  const [dbImageURL, setDBImageURL] = useState("")
+  const [actionButton, setActionButton] = useState("Publish now")
+  const {event, setEvent} = useEventContext()
+  
 
   useEffect(() => {
-    alert(event)
-  }, [])
+    if(dbImageURL != ""){
+      uploadEvent()
+    }
+  }, [dbImageURL])
+
+
+  
+  const onSubmit = async () => {
+    try{
+        /*  const eventData = {
+          title: data.title, 
+          description: data.description, 
+          startDate: data.startDate,
+          endDate: data.endDate,
+          location: data.location,
+          privacy: data.privacy,
+          ticketFee: data.ticketFee,
+          ticketNumber: data.ticketNumber,
+          imageURL: URLImageView,
+          categories : selectedCategories
+        }*/
+        //setEvent(eventData)
+      //}else{
+        //alert("No error")
+      //} 
+        setActionButton('Loading...')
+        await uploadImage('event', event.uploadedImage) 
+          
+    }catch(e){
+      alert(e)
+    } 
+    /*if(selectedCategories.length === 0){
+      setCategoryError('category must be selected')
+      return
+    }*/
+    /*try{
+        
+        //setIsLoading(true)
+        setActionButton('Loading...')
+        await uploadImage('event', uploadedImage) 
+        
+    }catch(error){
+        alert('error: ' + error)
+        setError('something went wrong')
+    } */
+    //setActionButton("Create Account")
+    //navigate("/verification-message")
+}
+
+const uploadEvent = async ()=> {
+  try{
+    const collectionName = 'Event'
+    const payload = { 
+        title: event.title, 
+        description: event.description, 
+        startDate: event.startDate,
+        endDate: event.endDate,
+        location: event.location,
+        privacy: event.privacy,
+        ticketFee: event.ticketFee,
+        ticketNumber: event.ticketNumber,
+        imageURL: event.imageURL,
+        categories : event.categories, 
+        status: 1,  
+        dateCreated: Date.now(),
+        dateUpdated: Date.now()
+    }
+      setActionButton('Loading...')
+      const res = await addDocToFirestore(collectionName, payload)
+      if(res.status === 200){
+        alert('Successful')
+      }else{
+        alert("Error")
+        setError('something went wrong')
+      }
+  }catch(error){
+      setError('something went wrong')
+  } 
+  setActionButton("Update event")
+  
+}
+
+const uploadImage = async (path, uploadedImage) => {
+  const storageRef = ref(storage, `files/${path}/${new Date()}`);
+  const uploadTask = uploadBytesResumable(storageRef, uploadedImage);
+
+  uploadTask.on("state_changed",
+    (snapshot) => {
+      const progress =
+        Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+      //setProgresspercent(progress);
+    },
+    (error) => {
+      //return {status: 500}
+      alert(error);
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        setDBImageURL(downloadURL)
+        //return {status: 200, data: {url: downloadURL}}
+      });
+    }
+  );
+}
+
+
   return (
     <div className="w-full relative bg-generic-white overflow-hidden flex flex-col items-end justify-start pt-0 px-0 pb-[60px] box-border gap-[24px] leading-[normal] tracking-[normal]">
       <img
@@ -21,7 +132,7 @@ const EventPreview = () => {
         <section className="flex-1 flex flex-col items-start justify-start gap-[24px] max-w-full text-left text-5xl text-primary-900 font-paragraph-medium-medium">
           <div className="flex flex-col items-start justify-start gap-[6px] text-13xl">
             <h1 className="m-0 relative text-inherit font-bold font-inherit mq450:text-lgi mq750:text-[26px]">
-              {"WOmen in tech"}
+              {event.title}
             </h1>
             <div className="flex flex-row items-start justify-start gap-[8px] text-3xl text-neutral-700">
               <h2 className="m-0 relative text-inherit font-medium font-inherit mq450:text-lg">
@@ -41,7 +152,7 @@ const EventPreview = () => {
               className="h-[372px] flex-1 relative rounded-md max-w-full overflow-hidden object-cover"
               loading="lazy"
               alt=""
-              src="/frame-151@2x.png"
+              src={event.imageURL}
             />
           </div>
           <div className="w-[337px] flex flex-col items-start justify-start pt-0 px-0 pb-1.5 box-border gap-[12px] max-w-full">
@@ -54,23 +165,23 @@ const EventPreview = () => {
                   <div className="w-2.5 h-2.5 relative rounded-xl bg-primary-900 overflow-hidden shrink-0" />
                 </div>
                 <div className="flex-1 relative tracking-[-0.02em] leading-[32px] font-semibold text-primary-500 inline-block min-w-[96px] mq450:text-lgi mq450:leading-[26px]">
-                  From N2,000
+                  From N{event.ticketFee}
                 </div>
               </div>
               <div className="flex flex-row items-start justify-start gap-[12px] text-base">
                 <img
                   className="h-6 w-6 relative overflow-hidden shrink-0 min-h-[24px]"
                   alt=""
-                  src="/frame-31.svg"
+                  src={event.imageURL}
                 />
                 <div className="relative leading-[24px] inline-block min-w-[87px]">
-                  Sat, Mar 27
+                  {new Date(event.startDate.toString()).getDate()}
                 </div>
                 <div className="flex flex-col items-start justify-start pt-2 px-0 pb-0">
                   <div className="w-2 h-2 relative rounded-xl bg-primary-900 overflow-hidden shrink-0" />
                 </div>
                 <div className="relative leading-[24px] inline-block min-w-[72px] whitespace-nowrap">
-                  10:00 AM
+                  {"10:00 pm"}
                 </div>
               </div>
             </div>
@@ -81,7 +192,7 @@ const EventPreview = () => {
                 src="/frame-4.svg"
               />
               <div className="relative leading-[24px]">
-                Dee’s Hotel, Utako Abuja
+                {event.location}
               </div>
             </div>
           </div>
@@ -90,11 +201,7 @@ const EventPreview = () => {
               About this event
             </h1>
             <div className="self-stretch relative text-base leading-[24px]">
-              "Escape the hustle and bustle of daily life and join us for a
-              serene afternoon at our Ladies Picnic Event! Indulge in delicious
-              treats, sip refreshing drinks, and enjoy delightful company amidst
-              nature's beauty. Let's create unforgettable memories together in a
-              blissful setting. Don't miss out – reserve your spot now!"
+              {event.description}
             </div>
           </div>
           <div className="w-[470px] flex flex-col items-start justify-start pt-0 px-0 pb-[26px] box-border gap-[30px] max-w-full">
@@ -113,7 +220,7 @@ const EventPreview = () => {
                   <div className="flex-1 flex flex-col items-start justify-start pt-[18px] px-0 pb-0 box-border min-w-[155px]">
                     <div className="self-stretch flex flex-row items-start justify-start gap-[10px]">
                       <div className="relative leading-[24px] font-semibold inline-block min-w-[112px]">
-                        Fatima Ahmad
+                        {"Abba Kabiru"}
                       </div>
                       <div className="flex flex-col items-start justify-start pt-2 px-0 pb-0">
                         <div className="w-2 h-2 relative rounded-xl bg-primary-500 overflow-hidden shrink-0" />
@@ -139,53 +246,32 @@ const EventPreview = () => {
               </h1>
               <div className="self-stretch flex flex-col items-start justify-start gap-[15px] max-w-full">
                 <div className="flex flex-row items-start justify-start gap-[13px] max-w-full mq675:flex-wrap">
+                  {event?.categories?.map((cat, i) =>
                   <button className="cursor-pointer [border:none] py-2 px-5 bg-neutral-200 rounded-lgi flex flex-row items-center justify-center hover:bg-lightgray-200">
                     <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[35px]">
-                      Picnic
+                      {cat}
                     </div>
                   </button>
-                  <button className="cursor-pointer [border:none] py-2 px-5 bg-neutral-200 rounded-lgi flex flex-row items-center justify-center whitespace-nowrap hover:bg-lightgray-200">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[73px]">
-                      Ladies event
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-2 px-5 bg-neutral-200 rounded-lgi flex flex-row items-center justify-center hover:bg-lightgray-200">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[105px]">
-                      OutdoorGathering
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-2 px-5 bg-neutral-200 rounded-lgi flex flex-row items-center justify-center hover:bg-lightgray-200">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[39px]">
-                      Nature
-                    </div>
-                  </button>
+                  )}
                 </div>
-                <div className="self-stretch flex flex-row items-start justify-start gap-[13px] mq675:flex-wrap">
-                  <button className="cursor-pointer [border:none] py-2 px-5 bg-neutral-200 rounded-lgi flex flex-row items-center justify-center hover:bg-lightgray-200">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[82px]">
-                      FoodAndDrink
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-2 px-5 bg-neutral-200 rounded-lgi flex flex-row items-center justify-center hover:bg-lightgray-200">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[60px]">
-                      Relaxation
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-2 px-5 bg-neutral-200 rounded-lgi flex flex-row items-center justify-center hover:bg-lightgray-200">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[66px]">
-                      Community
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-2 px-5 bg-neutral-200 rounded-lgi flex flex-row items-center justify-center hover:bg-lightgray-200">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[61px]">
-                      Friendship
-                    </div>
-                  </button>
-                </div>
+                
               </div>
             </div>
           </div>
-          <FrameComponent />
+          <div className="w-[1297px] flex flex-row items-start justify-center py-0 px-5 box-border max-w-full">
+      <div className="w-[569px] flex flex-col items-start justify-start gap-[16px] max-w-full">
+        <button onClick={() => onSubmit()} className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-start justify-center hover:bg-slateblue">
+          <div className="relative text-base leading-[24px] font-semibold font-paragraph-medium-medium text-generic-white text-left inline-block min-w-[94px]">
+            {actionButton}
+          </div>
+        </button>
+        <button onClick={() => setPage("EditEvent")} className="cursor-pointer py-2.5 px-5 bg-primary-50 self-stretch rounded-md flex flex-row items-start justify-center border-[1px] border-solid border-primary-100 hover:bg-thistle-100 hover:box-border hover:border-[1px] hover:border-solid hover:border-thistle-200">
+          <div className="relative text-base leading-[24px] font-semibold font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[78px]">
+            Edit event
+          </div>
+        </button>
+      </div>
+    </div>
         </section>
       </main>
     </div>

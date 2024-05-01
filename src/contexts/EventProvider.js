@@ -1,10 +1,10 @@
-import { createContext } from "react"
+import { createContext, useContext } from "react"
 import { useState } from "react"
 
 export const EventContext = createContext()
 
 export const EventContextProvider = ({children}) => {
-    const [event, setEvent] = useState({a:1})
+    const [event, setEvent] = useState(null)
 
     return(
         <EventContext.Provider value={{event, setEvent}} >
@@ -12,3 +12,5 @@ export const EventContextProvider = ({children}) => {
         </EventContext.Provider>    
     )
 }
+
+export const useEventContext = () => useContext(EventContext);

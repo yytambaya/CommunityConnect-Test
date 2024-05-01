@@ -46,6 +46,7 @@ import Profile7 from "./pages/Profile7";
 //import CreateEvent from "./pages/Event1";
 import ProfileOverview from "./pages/ProfileOverview";
 import ProfilePersonal from "./pages/ProfilePersonal";
+import { EventContextProvider } from "./contexts/EventProvider";
 
 function App() {
   const action = useNavigationType();
@@ -240,6 +241,7 @@ function App() {
   }, [pathname]);
 
   return (
+    <EventContextProvider>
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
@@ -288,6 +290,8 @@ function App() {
       <Route path="/profile6" element={<Profile />} />
       <Route path="/profile7" element={<Profile7 />} />
     </Routes>
+    </EventContextProvider>
+
   );
 }
 export default App;

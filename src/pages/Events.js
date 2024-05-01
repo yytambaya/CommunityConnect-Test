@@ -8,6 +8,13 @@ const Events = () => {
     navigate("/events1");
   }, [navigate]);
 
+  useEffect(() => {
+      
+  }, [])
+
+  
+
+
   return (
     <div className="w-full h-[1200px] relative bg-generic-white overflow-hidden leading-[normal] tracking-[normal] text-left text-lg text-neutral-900 font-paragraph-medium-medium mq725:h-auto mq725:min-h-[960]">
       <img

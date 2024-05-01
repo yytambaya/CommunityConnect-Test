@@ -53,3 +53,7 @@ import { allConfig } from '../app/config'
       return null
     }  
   }
+
+  export const formatDate = (date) => {
+    return new Date(date)
+  }

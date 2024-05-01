@@ -13,7 +13,7 @@ import { EventContextProvider, useEventContext } from "../../../contexts/EventPr
 
 
 
-const CreateEvent = ({setPage, page}) => {
+const EditEvent = ({setPage, page}) => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState:{errors}} = useForm({ resolver: yupResolver(eventSchema)})
   const [freeTicketToggle, setFreeTicketToggle] = useState(false)
@@ -22,7 +22,7 @@ const CreateEvent = ({setPage, page}) => {
   const [categoryError, setCategoryError] = useState("")
   const [uploadedImage, setUploadedImage] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [actionButton, setActionButton] = useState("Create event")
+  const [actionButton, setActionButton] = useState("Update event")
   const [imageURL, setImageURL] = useState("")
   const [imageURLAvailable, setImageURLAvailable] = useState(false)
   const [URLImageView, setURLImageView] = useState("")
@@ -44,11 +44,20 @@ const CreateEvent = ({setPage, page}) => {
     }
   }, [uploadedImage])
 
-  useEffect(() => {
+   useEffect(() => {
+    setSelectedCategories([...event.categories])
+    setURLImageView(event.imageURL)
+    setImageURLAvailable(true)
+   }, []) 
+
+   useEffect(() => {
+    alert('Image is set')
+   }, [URLImageView])
+  /*useEffect(() => {
     if(event != null){
       setPage('EventPreview')
     }
-  }, [event])
+  }, [event])*/
 
   /*useEffect(() => {
     alert(selectedCategories)
@@ -84,47 +93,16 @@ const CreateEvent = ({setPage, page}) => {
   }
 
   const onSubmit = async (data) => {
-      //alert(JSON.stringify(data))
-      //alert('here')
+    alert('Me')
       try{
-        //if(errors.title?.message == "" || errors.description?.message == ""){      
           setData(data)
-          const eventData = {
-            title: data.title, 
-            description: data.description, 
-            startDate: data.startDate,
-            endDate: data.endDate,
-            location: data.location,
-            privacy: data.privacy,
-            ticketFee: data.ticketFee,
-            ticketNumber: data.ticketNumber,
-            imageURL: URLImageView,
-            uploadedImage: uploadedImage,
-            categories : selectedCategories
-          }
-          setEvent(eventData)
-        //}else{
-          //alert("No error")
-        //} 
-      }catch(e){
-        alert(e)
-      } 
-      /*if(selectedCategories.length === 0){
-        setCategoryError('category must be selected')
-        return
-      }*/
-      /*try{
-          
-          //setIsLoading(true)
           setActionButton('Loading...')
           await uploadImage('event', uploadedImage) 
           
       }catch(error){
           alert('error: ' + error)
           setError('something went wrong')
-      } */
-      //setActionButton("Create Account")
-      //navigate("/verification-message")
+      }
   }
 
   const uploadEvent = async ()=> {
@@ -161,7 +139,7 @@ const CreateEvent = ({setPage, page}) => {
         //alert('error: ' + error)
         setError('something went wrong')
     } 
-    setActionButton("Create Event")
+    setActionButton("Edit event")
     
   }
 
@@ -202,7 +180,7 @@ const CreateEvent = ({setPage, page}) => {
           <div className="w-[286px] rounded-md bg-generic-white overflow-hidden shrink-0 flex flex-row items-start justify-start pt-1.5 px-3 pb-[5.5px] box-border gap-[82px]">
             <div className="w-full flex flex-row items-start justify-start gap-[4px]">
               <div className="w-full flex flex-col items-start justify-start pt-px px-0 pb-0">
-                <input
+                <input 
                   className="w-full cursor-pointer m-0 h-[18px] relative overflow-hidden shrink-0"
                   type="radio"
                 />
@@ -250,7 +228,7 @@ const CreateEvent = ({setPage, page}) => {
         <form onSubmit={handleSubmit(onSubmit)} className="w-[395px] flex flex-col items-start justify-start gap-[24px] max-w-full">
           <div className="self-stretch flex flex-row items-start justify-center py-0 px-5 text-5xl">
             <h2 className="m-0 relative text-inherit tracking-[-0.02em] leading-[32px] font-semibold font-inherit mq450:text-lgi mq450:leading-[26px]">
-              Create an event
+              Edit event
             </h2>
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
@@ -259,6 +237,7 @@ const CreateEvent = ({setPage, page}) => {
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
+                defaultValue={event.title}
                 {...register("title")}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="Enter the name of your event"
@@ -272,6 +251,7 @@ const CreateEvent = ({setPage, page}) => {
               Event description
             </div>
             <textarea
+               defaultValue={event.description} 
               {...register("description")}
               className="bg-neutral-100 h-[131px] w-auto [outline:none] self-stretch rounded-md box-border flex flex-row items-start justify-start py-2.5 px-4 font-paragraph-medium-medium text-sm  border-[1px] border-solid border-neutral-200"
               placeholder="Write about your event"
@@ -324,6 +304,7 @@ const CreateEvent = ({setPage, page}) => {
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-between py-3 pr-[17px] pl-[15px] whitespace-nowrap gap-[20px] text-sm  border-[1px] border-solid border-neutral-200">
                 <input
+                defaultValue={"2022/04/02"}
                 {...register("startDate")}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400  text-left inline-block p-0"
                 placeholder="choose date"
@@ -338,6 +319,7 @@ const CreateEvent = ({setPage, page}) => {
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-between py-3 pr-[17px] pl-[15px] whitespace-nowrap gap-[20px] text-sm  border-[1px] border-solid border-neutral-200">
                 <input
+                defaultValue= {"04-03-2024"}    
                 {...register("endDate")}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-neutral-400 text-left inline-block p-0"
                 placeholder="choose date"
@@ -352,7 +334,9 @@ const CreateEvent = ({setPage, page}) => {
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
+                
                 {...register("location")}
+                defaultValue={event.location}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="Where is your event located?"
                 type="text"
@@ -366,7 +350,7 @@ const CreateEvent = ({setPage, page}) => {
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-between py-2 gap-[20px] text-sm text-neutral-800 border-[1px] border-solid border-neutral-200">
               <div className="w-full flex flex-col items-start justify-center">
-                <select {...register("privacy")} className="w-full bg-neutral-100 outline-none relative leading-[20px] inline-block min-w-[41px]">
+                <select {...register("privacy")} defaultValue={event.privacy} className="w-full bg-neutral-100 outline-none relative leading-[20px] inline-block min-w-[41px]">
                   <option value="public">Public</option>
                   <option value="private">Private</option>
                 </select>
@@ -385,7 +369,7 @@ const CreateEvent = ({setPage, page}) => {
             {!freeTicketToggle && <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
                 {...register("ticketFee")}
-                defaultValue={0.0}
+                defaultValue={event.ticketFee}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="0.00"
                 type="number"
@@ -413,6 +397,7 @@ const CreateEvent = ({setPage, page}) => {
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
                 {...register("ticketNumber")}
+                defaultValue={event.ticketNumber}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="0"
                 type="number"
@@ -440,7 +425,10 @@ const CreateEvent = ({setPage, page}) => {
    </div>
  )}
 
-  {imageURLAvailable && <img className=" w-36 h-36" src={URLImageView}/>}
+  {imageURLAvailable && <div className="">
+    <img className="w-36 h-36" src={URLImageView}/>
+    <button className=" py-2 px-4" onClick={() => {setURLImageView(""); setImageURLAvailable(false)}}>delete</button>
+    </div>}
 </div>
 
           {/*<div className="w-full h-[167px] flex flex-col items-start justify-start gap-[12px] max-w-full">
@@ -460,7 +448,7 @@ const CreateEvent = ({setPage, page}) => {
             </div>}
             {imageURLAvailable && <img className=" w-6 h-6" src=""/>}
           </div>*/}
-          <div className="w-full self-stretch flex flex-row items-start justify-start pt-0 px-0 pb-1.5 box-border max-w-full text-sm">
+          <div className="w-full mt-8 self-stretch flex flex-row items-start justify-start pt-0 px-0 pb-1.5 box-border max-w-full text-sm">
             <div className="w-full flex-1 flex flex-col items-start justify-start gap-[12px] max-w-full">
               <div className="flex flex-row items-center justify-start">
                 <div className="relative leading-[20px] font-medium">
@@ -504,4 +492,4 @@ const CreateEvent = ({setPage, page}) => {
   );
 };
 
-export default CreateEvent;
+export default EditEvent;
