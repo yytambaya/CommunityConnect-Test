@@ -3,31 +3,31 @@ import { firebaseApp, db } from '../../configs/firebase.config'
 // import { addToLocalStorage } from '../../../utils/helpers';
 import { addDoc, collection, getDocs, getFirestore, query, where } from 'firebase/firestore';
 import { Result } from 'postcss';
+import { uploadFile } from '../storage/storage';
 
 const auth = getAuth(firebaseApp)
         
 export const loginWithGoogle = async () => {
     try{
         const googleAuthProvider = new GoogleAuthProvider();
-        const loginResult = await signInWithPopup(auth, googleAuthProvider)     
+        const loginResult = await signInWithPopup(auth, googleAuthProvider) 
+        //alert("Success")    
         const credential = GoogleAuthProvider.credentialFromResult(loginResult);
         const user = loginResult.user
         
-        const q = query(collection(db, "users"), where("uid", "==", user.uid));
+        const q = query(collection(db, "User"), where("uid", "==", user.uid));
         const docs = await getDocs(q);
         if (docs.docs.length === 0) {
-        await addDoc(collection(db, "users"), {
+        await addDoc(collection(db, "User"), {
             uid: user.uid,
             name: user.displayName,
             authProvider: "google",
             email: user.email,
-            /* settings: {
-                banned : 0,
-                trip: 0,
-                realtime: 0,
-                feedback: 0,
-                tip: 0,
-            } */
+            role: "user",
+            emailStatus: 1,
+            accountStatus: 1,
+            createdDate: Date.now(),
+            updatedDate: Date.now()
         });
         }
 
@@ -35,10 +35,10 @@ export const loginWithGoogle = async () => {
         const userDetails = loginResult.user;
         //addToLocalStorage('user', JSON.stringify(userDetails))
         //addToLocalStorage('accessToken', accessToken)
-        return {status: 200, message: 'success', data: {user, accessToken}}
+        // return {status: 200, message: 'success', data: {user, accessToken}}
     }catch(error){
-        // alert(error)
-        return {status: 500, message: 'something went wrong', data: {error}}
+        alert("Error: " + error)
+        // return {status: 500, message: 'something went wrong', data: {error}}
     }
 }
 
@@ -113,27 +113,38 @@ export const loginWithApple = async () => {
 }
 
 
-export const signupWithEmailAndPassword = async (name, email, password) => {
+export const signupWithEmailAndPassword = async (payload) => {
     try {
-      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const res = await createUserWithEmailAndPassword(auth, payload?.email, payload?.password);
       const user = res.user;
-      await addDoc(collection(db, "users"), {
+      await addDoc(collection(db, "User"), {
         uid: user.uid,
-        name,
-        authProvider: "local",
-        email,
+        name: payload?.name,
+        authProvider: "EmailPassword",
+        email: payload?.email,
+        password: payload?.password,
+        role: "user",
+        emailStatus: 0,
+        accountStatus: 1,
+        createdDate: Date.now(),
+        updatedDate: Date.now()
       });
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
+      return {status: 200, message: 'success', data: {user}}
+    
+    } catch (error) {
+      console.error(error);
+      //alert(error);
+      return {status: 500, message: 'something went wrong', data: {error}}
     }
 };
 
 export const loginWithEmailAndPassword = async (email, password) => {
     try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredentials = await signInWithEmailAndPassword(auth, email, password);
+        return {status: 200, message: 'success', data: { userCredentials: userCredentials }}
     } catch (error) {
-        console.error(error);
+        //alert(error.code)
+        return {status: 500, message: 'something went wrong', data: {error}}
     }
 }
 

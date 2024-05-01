@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import LargeButtonSendLink from "../components/LargeButtonSendLink";
+import LargeButtonSendLink from "../../../components/LargeButtonSendLink";
 
 const ForgotPassword = () => {
   const navigate = useNavigate()

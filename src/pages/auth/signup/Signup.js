@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import FrameComponent from "../components/FrameComponent";
+import FrameComponent from "../../../components/FrameComponent";
 
 const Signup = () => {
   const navigate = useNavigate()

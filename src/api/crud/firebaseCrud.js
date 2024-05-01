@@ -1,13 +1,13 @@
 import { QuerySnapshot, addDoc, collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, updateDoc } from "firebase/firestore"
-import { db } from "../../configs/firbase.config"
+import { db } from "../../configs/firebase.config"
 
 export const addDocToFirestore = async (collectionName, payload) => {
     try{
         await addDoc(collection(db, collectionName), payload)
-        alert('success')
+        //alert('success')
         return {status: 200, message:'success', data: null}
     }catch(error){
-        alert('Error 500: ' + error)
+        //alert('Error 500: ' + error)
         return {status: 500, message: 'something went wrong', data: {error: error}}
     }
 }

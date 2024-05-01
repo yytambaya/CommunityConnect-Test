@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-const CreateEvent = () => {
+const CreateEvent2 = () => {
   const navigate = useNavigate();
 
   const onFrameContainerClick = useCallback(() => {
@@ -348,4 +348,4 @@ const CreateEvent = () => {
   );
 };
 
-export default CreateEvent;
+export default CreateEvent2;

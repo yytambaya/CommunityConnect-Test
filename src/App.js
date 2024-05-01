@@ -1,19 +1,16 @@
 import { useEffect } from "react";
-import {
-  Routes,
-  Route,
-  useNavigationType,
-  useLocation,
-} from "react-router-dom";
-import Signup from "./pages/Signup";
-import EmailVerificationMessage from "./pages/EmailVerificationMessage";
-import Login from "./pages/Login";
-// import Login1 from "./pages/Login1";*/}yyy
-// import Signup2 from "./pages/EmailVerificationMessage";
-import ForgotPassword from "./pages/ForgotPassword";
-import ForgotPasswordMessage from "./pages/ForgotPasswordMessage";
-import ResetPassword from "./pages/ResetPassword";
-import ResetPasswordMessage from "./pages/ResetPasswordMessage";
+import {Routes, Route, useNavigationType, useLocation,} from "react-router-dom";
+
+import Signup from "./pages/auth/signup/Signup";
+import Login from "./pages/auth/login/Login";
+import ForgotPassword from './pages/auth/forgotpassword/ForgotPassword'
+import EmailVerificationMessage from "./pages/auth/login/EmailVerificationMessage";
+import ForgotPasswordMessage from "./pages/auth/forgotpassword/ForgotPasswordMessage";
+import ResetPassword from "./pages/auth/passwordreset/ResetPassword";
+import ResetPasswordMessage from "./pages/auth/passwordreset/ResetPasswordMessage";
+
+import CreateEvent from "./pages/event/create-event/CreateEvent";
+
 import Events1 from "./pages/Events1";
 import SingleEvent from "./pages/SingleEvent";
 import Events3 from "./pages/Events3";
@@ -22,7 +19,7 @@ import Explore1 from "./pages/Explore1";
 import Eventsww from "./pages/Eventsww";
 import Events from "./pages/Events";
 import Events21 from "./pages/Events21";
-import Events31 from "./pages/Events31";
+import Events31 from "./pages/event/create-event/CreateEvent";
 import Events4 from "./pages/EventsPreview";
 import SingleEvent22 from "./pages/SingleEvent22";
 import Post from "./pages/Post";
@@ -46,7 +43,7 @@ import Profile5 from "./pages/Profile5";
 import Profile6 from "./pages/Profile6";
 import Profile2 from "./pages/Profile2";
 import Profile7 from "./pages/Profile7";
-import CreateEvent from "./pages/Event1";
+//import CreateEvent from "./pages/Event1";
 import ProfileOverview from "./pages/ProfileOverview";
 import ProfilePersonal from "./pages/ProfilePersonal";
 

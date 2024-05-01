@@ -1,8 +1,121 @@
-import { useCallback } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { eventSchema } from "../../../validators/event.validator";
+import { useForm } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
+import { events } from "../../../data/event.data";
+import { uploadFile } from "../../../api/storage/storage";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../../configs/firebase.config";
+import { addDocToFirestore } from "../../../api/crud/firebaseCrud";
 
-const Events3 = () => {
+
+
+
+const CreateEvent = () => {
   const navigate = useNavigate();
+  const { register, handleSubmit, formState:{errors}} = useForm({ resolver: yupResolver(eventSchema)})
+  const [freeTicketToggle, setFreeTicketToggle] = useState(false)
+  const [selectedCategories, setSelectedCategories] = useState([])
+  const [error, setError] = useState('')
+  const [categoryError, setCategoryError] = useState("")
+  const [uploadedImage, setUploadedImage] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [actionButton, setActionButton] = useState("Create event")
+  const [imageURL, setImageURL] = useState("")
+  const [data, setData] = useState(null)
+
+  useEffect(() => {
+    //alert(imageURL)
+    if(imageURL !== ""){
+      uploadEvent()
+    }
+  }, [imageURL])
+
+
+  const uploadImage = async (path, uploadedImage) => {
+    const storageRef = ref(storage, `files/${path}`);
+    const uploadTask = uploadBytesResumable(storageRef, uploadedImage);
+  
+    uploadTask.on("state_changed",
+      (snapshot) => {
+        const progress =
+          Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        //setProgresspercent(progress);
+      },
+      (error) => {
+        //return {status: 500}
+        alert(error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageURL(downloadURL)
+          //return {status: 200, data: {url: downloadURL}}
+        });
+      }
+    );
+  }
+
+  const onSubmit = async (data) => {
+      //alert(JSON.stringify(data))
+      //alert('here')
+      setData(data)
+      /*if(selectedCategories.length === 0){
+        setCategoryError('category must be selected')
+        return
+      }*/
+      try{
+          
+          //setIsLoading(true)
+          setActionButton('Loading...')
+          await uploadImage('event', uploadedImage) 
+          
+      }catch(error){
+          alert('error: ' + error)
+          setError('something went wrong')
+      } 
+      setActionButton("Create Account")
+      //navigate("/verification-message")
+  }
+
+  const uploadEvent = async ()=> {
+    try{
+      const collectionName = 'Event'
+      const payload = { 
+          title: data.title, 
+          description: data.description, 
+          startDate: data.startDate,
+          endDate: data.endDate,
+          location: data.location,
+          privacy: data.privacy,
+          ticketFee: data.ticketFee,
+          ticketNumber: data.ticketNumber,
+          imageURL: imageURL,
+          categories :data.categories, 
+          status: 1,  
+          dateCreated: Date.now(),
+          dateUpdated: Date.now()
+      }
+      //setIsLoading(true)
+      setActionButton('Loading...')
+
+        const res = await addDocToFirestore(collectionName, payload)
+        if(res.status === 200){
+            //setNotification(true)
+            navigate('/app/event/event-preview')
+        }else{
+            setError('something went wrong')
+            //setError(res.message)
+        }
+      
+    }catch(error){
+        //alert('error: ' + error)
+        setError('something went wrong')
+    } 
+    setActionButton("Create Account")
+    
+  }
 
   const onFrameContainerClick = useCallback(() => {
     navigate("/events");
@@ -39,10 +152,10 @@ const Events3 = () => {
         </div>
         <div className="w-[435px] bg-primary-700 overflow-hidden shrink-0 flex flex-row items-start justify-start py-3 px-6 box-border gap-[20px] max-w-full text-sm text-neutral-600">
           <div className="w-[286px] rounded-md bg-generic-white overflow-hidden shrink-0 flex flex-row items-start justify-start pt-1.5 px-3 pb-[5.5px] box-border gap-[82px]">
-            <div className="flex flex-row items-start justify-start gap-[4px]">
-              <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
+            <div className="w-full flex flex-row items-start justify-start gap-[4px]">
+              <div className="w-full flex flex-col items-start justify-start pt-px px-0 pb-0">
                 <input
-                  className="cursor-pointer m-0 w-[18px] h-[18px] relative overflow-hidden shrink-0"
+                  className="w-full cursor-pointer m-0 h-[18px] relative overflow-hidden shrink-0"
                   type="radio"
                 />
               </div>
@@ -86,7 +199,7 @@ const Events3 = () => {
         </div>
       </header>
       <section className="self-stretch flex flex-row items-start justify-center py-0 pr-[21px] pl-5 box-border max-w-full text-left text-base text-primary-900 font-paragraph-medium-medium">
-        <div className="w-[395px] flex flex-col items-start justify-start gap-[24px] max-w-full">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-[395px] flex flex-col items-start justify-start gap-[24px] max-w-full">
           <div className="self-stretch flex flex-row items-start justify-center py-0 px-5 text-5xl">
             <h2 className="m-0 relative text-inherit tracking-[-0.02em] leading-[32px] font-semibold font-inherit mq450:text-lgi mq450:leading-[26px]">
               Create an event
@@ -98,24 +211,28 @@ const Events3 = () => {
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
-                className="w-[193px] [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400 text-left inline-block p-0"
+                {...register("title")}
+                className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400 text-left inline-block p-0"
                 placeholder="Enter the name of your event"
                 type="text"
               />
             </div>
+            {errors.title && <p className="text-red-500 -mt-2">{errors.title?.message}</p>}
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium">
               Event description
             </div>
             <textarea
+              {...register("description")}
               className="bg-neutral-100 h-[131px] w-auto [outline:none] self-stretch rounded-md box-border flex flex-row items-start justify-start py-2.5 px-4 font-paragraph-medium-medium text-sm text-neutral-400 border-[1px] border-solid border-neutral-200"
               placeholder="Write about your event"
               rows={7}
               cols={19}
             />
+            {errors.description && <p className="text-red-500 -mt-2">{errors.description?.message}</p>}
           </div>
-          <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
+          {/*<div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="flex flex-row items-start justify-start gap-[8px]">
               <div className="relative leading-[24px] font-medium inline-block min-w-[118px]">
                 Invite Co-hosts
@@ -152,36 +269,34 @@ const Events3 = () => {
                 </div>
               </div>
             </div>
+          </div>*/}
+          <div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
+            <div className="relative leading-[24px] font-medium">
+              When does your event starts?
+            </div>
+            <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-between py-3 pr-[17px] pl-[15px] whitespace-nowrap gap-[20px] text-sm text-neutral-400 border-[1px] border-solid border-neutral-200">
+                <input
+                {...register("startDate")}
+                className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400 text-left inline-block p-0"
+                placeholder="choose date"
+                type="date"
+              />
+            </div>
+            {errors.startDate && <p className="text-red-500 -mt-2">{errors.startDate?.message}</p>}
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
             <div className="relative leading-[24px] font-medium">
-              When does your event start and end?
+              When does your event ends?
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-between py-3 pr-[17px] pl-[15px] whitespace-nowrap gap-[20px] text-sm text-neutral-400 border-[1px] border-solid border-neutral-200">
-              <div className="relative leading-[20px] inline-block min-w-[85px]">
-                Choose date
-              </div>
-              <img
-                className="h-5 w-5 relative overflow-hidden shrink-0 min-h-[20px]"
-                alt=""
-                src="/frame-34.svg"
+                <input
+                {...register("endDate")}
+                className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400 text-left inline-block p-0"
+                placeholder="choose date"
+                type="date"
               />
             </div>
-          </div>
-          <div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
-            <div className="relative leading-[24px] font-medium inline-block max-w-full">
-              When time does your event start and end?
-            </div>
-            <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-between py-3 pr-[17px] pl-[15px] whitespace-nowrap gap-[20px] text-sm text-neutral-400 border-[1px] border-solid border-neutral-200">
-              <div className="relative leading-[20px] inline-block min-w-[84px]">
-                Choose time
-              </div>
-              <img
-                className="h-5 w-5 relative overflow-hidden shrink-0 min-h-[20px]"
-                alt=""
-                src="/frame-34.svg"
-              />
-            </div>
+            {errors.endDate && <p className="text-red-500 -mt-2">{errors.endDate?.message}</p>}
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium inline-block min-w-[109px]">
@@ -189,75 +304,88 @@ const Events3 = () => {
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
-                className="w-48 [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400 text-left inline-block p-0"
+                {...register("location")}
+                className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400 text-left inline-block p-0"
                 placeholder="Where is your event located?"
                 type="text"
               />
             </div>
+            {errors.location && <p className="text-red-500 -mt-2">{errors.location?.message}</p>}
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
             <div className="relative leading-[24px] font-medium inline-block min-w-[104px]">
               Event privacy
             </div>
-            <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-between py-2 px-4 gap-[20px] text-sm text-neutral-800 border-[1px] border-solid border-neutral-200">
-              <div className="flex flex-col items-start justify-center">
-                <div className="relative leading-[20px] inline-block min-w-[41px]">
-                  Public
-                </div>
+            <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-between py-2 gap-[20px] text-sm text-neutral-800 border-[1px] border-solid border-neutral-200">
+              <div className="w-full flex flex-col items-start justify-center">
+                <select {...register("privacy")} className="w-full bg-neutral-100 outline-none relative leading-[20px] inline-block min-w-[41px]">
+                  <option value="public">Public</option>
+                  <option value="private">Private</option>
+                </select>
                 <div className="relative text-xs leading-[20px] text-neutral-400">
                   Anyone can access the event
                 </div>
               </div>
-              <img
-                className="h-5 w-5 relative overflow-hidden shrink-0"
-                alt=""
-                src="/frame-34.svg"
-              />
             </div>
+            {errors.privacy && <p className="text-red-500 -mt-2">{errors.privacy?.message}</p>}
           </div>
-          <div className="w-[380px] flex flex-col items-start justify-start gap-[8px] max-w-full">
-            <div className="self-stretch flex flex-col items-start justify-start gap-[12px] max-w-full">
-              <div className="relative leading-[24px] font-medium inline-block max-w-full">
-                How much do you want to charge for tickets?
-              </div>
-              <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-start py-3 px-4 text-sm text-neutral-800 border-[1px] border-solid border-neutral-200">
-                <div className="relative leading-[20px] inline-block min-w-[30px]">
-                  0.00
-                </div>
-              </div>
+          
+          <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
+            <div className="relative leading-[24px] font-medium inline-block min-w-[77px]">
+              How much do you want to charge per ticket?
             </div>
+            {!freeTicketToggle && <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
+              <input
+                {...register("ticketFee")}
+                className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400 text-left inline-block p-0"
+                placeholder="0.00"
+                type="number"
+              />
+            </div>}
             <div className="flex flex-row items-center justify-start gap-[14px] text-sm">
-              <div className="h-6 w-[42px] relative rounded-2xl bg-neutral-200 overflow-hidden shrink-0">
-                <div className="absolute top-[3px] left-[2px] rounded-81xl bg-primary-500 w-[18px] h-[18px] overflow-hidden" />
+              <div onClick={() => setFreeTicketToggle(!freeTicketToggle)} className="cursor-pointer h-6 w-[42px] relative rounded-2xl bg-neutral-200 overflow-hidden shrink-0">
+                {freeTicketToggle ? 
+                  <div className="absolute top-[3px] right-1 rounded-81xl bg-primary-500 w-[18px] h-[18px] overflow-hidden" />
+                  :<div className="absolute top-[3px] left-1 rounded-81xl bg-gray-500 w-[18px] h-[18px] overflow-hidden" />
+                } 
               </div>
               <div className="relative leading-[20px] font-medium inline-block min-w-[105px]">
                 Tickets are free
               </div>
             </div>
+            {errors.ticketFee && <p className="text-red-500 -mt-2">{errors.ticketFee?.message}</p>}
           </div>
+
+          
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
-            <div className="relative leading-[24px] font-medium">
+            <div className="relative leading-[24px] font-medium inline-block min-w-[77px]">
               How many tickets do you want to sell?
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
-                className="w-[9px] [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-800 text-left inline-block p-0"
+                {...register("ticketNumber")}
+                className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400 text-left inline-block p-0"
                 placeholder="0"
-                type="text"
+                type="number"
               />
             </div>
+            {errors.ticketNumber && <p className="text-red-500 -mt-2">{errors.ticketNumber?.message}</p>}
           </div>
+
           <div className="w-[380px] h-[167px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium">
               Upload your event poster/ cover image
             </div>
-            <div className="self-stretch flex-1 rounded-md bg-neutral-100 flex flex-row items-center justify-center py-2.5 px-4 border-[1px] border-solid border-neutral-200">
-              <img
-                className="h-6 w-6 relative overflow-hidden shrink-0"
+            <div className="w-full cursor-pointer self-stretch flex-1 rounded-md bg-neutral-100 flex items-center justify-center py-2.5 px-4 border-[1px] border-solid border-neutral-200">
+              {/*<img
+                className="h-6 w-6 z-20 shrink-0"
                 alt=""
                 src="/frame-6.svg"
-              />
+              />*/}
+              <input onChange={(e)=> setUploadedImage(e.target.files[0])} type="file" className="block opacity-0 cursor-pointer relative h-full w-full z-50 "/>
+              {errors.image && <p className="text-red-500 -mt-2">{errors.ticketNumber?.message}</p>}
             </div>
+            
           </div>
           <div className="self-stretch flex flex-row items-start justify-start pt-0 px-0 pb-1.5 box-border max-w-full text-sm">
             <div className="flex-1 flex flex-col items-start justify-start gap-[12px] max-w-full">
@@ -268,71 +396,35 @@ const Events3 = () => {
               </div>
               <div className="self-stretch flex flex-col items-start justify-start gap-[12px]">
                 <div className="self-stretch flex flex-row items-start justify-start gap-[11px] mq450:flex-wrap">
-                  <button className="cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start hover:bg-gainsboro-300">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[39px]">
-                      Sports
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start hover:bg-gainsboro-300">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[35px]">
-                      Music
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start hover:bg-gainsboro-300">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[28px]">
-                      Tech
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start hover:bg-gainsboro-300">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[49px]">
-                      Lifestyle
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start whitespace-nowrap hover:bg-gainsboro-300">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[80px]">{`Food & Drinks`}</div>
-                  </button>
+                {events.categories.map((cat, i) =>
+                    <button {...register('categories')} key={i} onClick={(e) => { e.preventDefault(); setSelectedCategories([...selectedCategories, cat])}} className={`cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start ${selectedCategories.find((thisCat) => { return thisCat === cat }) ? 'bg-gainsboro-300' : null} hover:bg-gainsboro-300`}>
+                      <div className={`relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[39px]`}>
+                        {cat}
+                      </div>
+                    </button>
+                  )}
                 </div>
-                <div className="flex flex-row items-start justify-start gap-[11px]">
-                  <button className="cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start hover:bg-gainsboro-300">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[42px]">
-                      Charity
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start hover:bg-gainsboro-300">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[37px]">
-                      Online
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start hover:bg-gainsboro-300">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[47px]">
-                      Concert
-                    </div>
-                  </button>
-                  <button className="cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start hover:bg-gainsboro-300">
-                    <div className="relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left inline-block min-w-[58px]">
-                      Education
-                    </div>
-                  </button>
-                </div>
+                {categoryError && <p className=" text-red-500 -mt-2">{categoryError}</p>}
+                {/*errors.categories && <p className="text-red-500 -mt-2">{errors.categories?.message}</p>*/}
               </div>
             </div>
           </div>
           <div className="self-stretch flex flex-col items-start justify-start gap-[16px]">
-            <button className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-start justify-center whitespace-nowrap hover:bg-slateblue">
+            <button type={'submit'} className="cursor-pointer [border:none] py-3 px-5 bg-primary-500 self-stretch rounded-md flex flex-row items-start justify-center whitespace-nowrap hover:bg-slateblue">
               <div className="relative text-base leading-[24px] font-semibold font-paragraph-medium-medium text-generic-white text-left inline-block min-w-[100px]">
-                Create event
+                {actionButton}
               </div>
             </button>
-            <button className="cursor-pointer py-2.5 px-5 bg-primary-50 self-stretch rounded-md flex flex-row items-start justify-center border-[1px] border-solid border-primary-100 hover:bg-thistle-100 hover:box-border hover:border-[1px] hover:border-solid hover:border-thistle-200">
+            <button onClick={('/app/events')} className="cursor-pointer py-2.5 px-5 bg-primary-50 self-stretch rounded-md flex flex-row items-start justify-center border-[1px] border-solid border-primary-100 hover:bg-thistle-100 hover:box-border hover:border-[1px] hover:border-solid hover:border-thistle-200">
               <div className="relative text-base leading-[24px] font-semibold font-paragraph-medium-medium text-primary-600 text-left inline-block min-w-[54px]">
                 Cancel
               </div>
             </button>
           </div>
-        </div>
+        </form>
       </section>
     </div>
   );
 };
 
-export default Events3;
+export default CreateEvent;
