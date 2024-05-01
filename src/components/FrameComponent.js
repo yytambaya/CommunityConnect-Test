@@ -98,7 +98,7 @@ const onSubmit = async (data) => {
             //alert('Signup successful')
             navigate("/app/events")
         }else{
-
+            
             setError(res.message)
         }
         //alert('Okay')
@@ -124,7 +124,7 @@ const onSubmit = async (data) => {
       </div>
       <div className="self-stretch flex flex-row items-start justify-start pt-0 px-0 pb-2 box-border max-w-full">
         <div className="flex-1 flex flex-col items-start justify-start gap-[16px] max-w-full">
-          <button onClick={(e) => {onGoogleLogin()}} className="cursor-pointer py-2.5 px-5 bg-[transparent] self-stretch rounded flex flex-row items-start justify-center gap-[14px] border-[1px] border-solid border-neutral-300">
+          <button onClick={(e) => {e.preventDefault(); onGoogleLogin()}} className="cursor-pointer py-2.5 px-5 bg-[transparent] self-stretch rounded flex flex-row items-start justify-center gap-[14px] border-[1px] border-solid border-neutral-300">
             <img
               
               className="cursor-pointer h-6 w-6 relative object-cover min-h-[24px]"

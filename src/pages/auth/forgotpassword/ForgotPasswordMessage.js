@@ -58,7 +58,7 @@ const ForgotPasswordMessage = () => {
               <p className="m-0">
                 <span className="font-paragraph-medium-medium text-primary-900">{`We just emailed a reset link to `}</span>
                 <span className="font-semibold font-paragraph-medium-medium text-primary-500">
-                  johndoe@gmail.com
+                  your email
                 </span>
                 <span>{`. `}</span>
               </p>

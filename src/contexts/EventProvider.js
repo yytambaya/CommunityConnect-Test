@@ -4,7 +4,7 @@ import { useState } from "react"
 export const EventContext = createContext()
 
 export const EventContextProvider = ({children}) => {
-    const [event, setEvent] = useState(JSON.parse(localStorage.getItem('event')))
+    const [event, setEvent] = useState({a:1})
 
     return(
         <EventContext.Provider value={{event, setEvent}} >

@@ -15,7 +15,7 @@ const LargeButtonSendLink = () => {
   
   
 const onSubmit = async (data) => {
-    alert(JSON.stringify(data))
+    //alert(JSON.stringify(data))
     try{
         setActionButton('Loading...')
         const res = await sendPasswordResetLinkToEmail(data.email)
@@ -25,12 +25,12 @@ const onSubmit = async (data) => {
             navigate('/forgot-password-message')
             //alert('Logged in: ' + res.data.userCredentials)
         }else{
-            alert("error: " + res.status)
+            //alert("error: " + res.status)
             setError(res.message)
         }
-        alert('Okay')
+        //alert('Okay')
     }catch(error){
-        alert('error: ' + error)
+        //alert('error: ' + error)
         setError('something went wrong')
     } 
     setActionButton("Send email")

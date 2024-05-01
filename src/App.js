@@ -9,7 +9,7 @@ import ForgotPasswordMessage from "./pages/auth/forgotpassword/ForgotPasswordMes
 import ResetPassword from "./pages/auth/passwordreset/ResetPassword";
 import ResetPasswordMessage from "./pages/auth/passwordreset/ResetPasswordMessage";
 
-import CreateEvent from "./pages/event/create-event/CreateEvent";
+import CreateEventPage from "./pages/event/create-event/CreateEventPage";
 
 import Events1 from "./pages/Events1";
 import SingleEvent from "./pages/SingleEvent";
@@ -20,7 +20,7 @@ import Eventsww from "./pages/Eventsww";
 import Events from "./pages/Events";
 import Events21 from "./pages/Events21";
 import Events31 from "./pages/event/create-event/CreateEvent";
-import Events4 from "./pages/EventsPreview";
+import Events4 from "./pages/event/create-event/EventsPreview";
 import SingleEvent22 from "./pages/SingleEvent22";
 import Post from "./pages/Post";
 import CreateCommunity from "./pages/CreateCommunity";
@@ -34,7 +34,7 @@ import Events12 from "./pages/Events12";
 import Event11 from "./pages/Event11";
 import Event2 from "./pages/Event2";
 import Event3 from "./pages/Event3";
-import EventPreview from "./pages/EventsPreview";
+import EventPreview from "./pages/event/create-event/EventsPreview";
 import Event5 from "./pages/Event5";
 import LandingPage from "./pages/LandingPage";
 import Events6 from "./pages/Events6";
@@ -253,7 +253,7 @@ function App() {
       <Route path="/events3" element={<Events1 />} />
       <Route path="/event/details" element={<SingleEvent />} />
       <Route path="/events5" element={<Events3 />} />
-      <Route path="/app/create-event" element={<CreateEvent />} />
+      <Route path="/app/create-event" element={<CreateEventPage />} />
       <Route path="/eventsww" element={<Events />} />
       <Route path="/events10" element={<Events1 />} />
       <Route path="/event1" element={<Event1 />} />

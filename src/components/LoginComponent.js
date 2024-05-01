@@ -23,9 +23,11 @@ const LoginComponent = () => {
         setIsLoading(true)
         const res = await loginWithGoogle()
         if(res.status === 200){
-            alert('Logged in')
+            navigate("/app/events")
+            //alert('Logged in')
         }else{
-          alert('Error logging in')
+        
+          //alert('Error logging in')
             setError(res.message)
         }
     }catch(error){
@@ -81,10 +83,13 @@ const onSubmit = async (data) => {
         //setIsLoading(true)
         setActionButton('Loading...')
         const res = await loginWithEmailAndPassword(data.email, data.password)
+        //alert(res)
         if(res.status === 200){
             // setNotification(true)
             //alert('Logged in: ' + res.data.userCredentials)
             navigate('/app/events')
+        }else if(res.status == 404){
+            setError("incorrect email or password")
         }else{
             //alert("error: " + res.status)
             setError(res.message)

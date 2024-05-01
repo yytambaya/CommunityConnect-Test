@@ -1,7 +1,14 @@
-import TopBar from "../components/TopBar1";
-import FrameComponent from "../components/FrameComponent5";
+import TopBar from "../../../components/TopBar1";
+import FrameComponent from "../../../components/FrameComponent5";
+import { useContext, useEffect } from "react";
+import { EventContextProvider } from "../../../contexts/EventProvider";
 
 const EventPreview = () => {
+  const event = useContext(EventContextProvider)
+
+  useEffect(() => {
+    alert(event)
+  }, [])
   return (
     <div className="w-full relative bg-generic-white overflow-hidden flex flex-col items-end justify-start pt-0 px-0 pb-[60px] box-border gap-[24px] leading-[normal] tracking-[normal]">
       <img
@@ -14,7 +21,7 @@ const EventPreview = () => {
         <section className="flex-1 flex flex-col items-start justify-start gap-[24px] max-w-full text-left text-5xl text-primary-900 font-paragraph-medium-medium">
           <div className="flex flex-col items-start justify-start gap-[6px] text-13xl">
             <h1 className="m-0 relative text-inherit font-bold font-inherit mq450:text-lgi mq750:text-[26px]">
-              Women in tech
+              {"WOmen in tech"}
             </h1>
             <div className="flex flex-row items-start justify-start gap-[8px] text-3xl text-neutral-700">
               <h2 className="m-0 relative text-inherit font-medium font-inherit mq450:text-lg">

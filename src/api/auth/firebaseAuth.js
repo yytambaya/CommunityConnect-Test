@@ -35,10 +35,10 @@ export const loginWithGoogle = async () => {
         const userDetails = loginResult.user;
         //addToLocalStorage('user', JSON.stringify(userDetails))
         //addToLocalStorage('accessToken', accessToken)
-        // return {status: 200, message: 'success', data: {user, accessToken}}
+        return {status: 200, message: 'success', data: {user, accessToken}}
     }catch(error){
         alert("Error: " + error)
-        // return {status: 500, message: 'something went wrong', data: {error}}
+        return {status: 500, message: 'something went wrong', data: {error}}
     }
 }
 
@@ -129,12 +129,16 @@ export const signupWithEmailAndPassword = async (payload) => {
         createdDate: Date.now(),
         updatedDate: Date.now()
       });
+      //await res.user.sendEmailVerification();
       return {status: 200, message: 'success', data: {user}}
     
     } catch (error) {
       console.error(error);
-      //alert(error);
-      return {status: 500, message: 'something went wrong', data: {error}}
+      alert(error);
+      if(error.code == "auth/email-already-in-use"){
+        return {status: 409, message: 'user already exists', data: {error}}
+      }
+      return {status: 500, message: error.message, data: {error}}
     }
 };
 
@@ -144,7 +148,11 @@ export const loginWithEmailAndPassword = async (email, password) => {
         return {status: 200, message: 'success', data: { userCredentials: userCredentials }}
     } catch (error) {
         //alert(error.code)
-        return {status: 500, message: 'something went wrong', data: {error}}
+        if(error.code === "auth/invalid-credential"){
+            return {status: 404, message: 'something went wrong', data: {error}}
+        }else{
+            return {status: 500, message: 'something went wrong', data: {error}}
+        }
     }
 }
 
