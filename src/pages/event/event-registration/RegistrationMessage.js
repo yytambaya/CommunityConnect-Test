@@ -1,6 +1,6 @@
-import TopBar2 from "../components/TopBar21";
+import TopBar2 from "../../../components/TopBar21";
 
-const SingleEvent22 = () => {
+const RegistrationMessage = () => {
   return (
     <div className="w-full h-[990px] relative bg-generic-white overflow-hidden flex flex-col items-start justify-start pt-0 px-0 pb-[232px] box-border gap-[648px] leading-[normal] tracking-[normal] text-left text-base text-generic-white font-paragraph-medium-medium mq450:gap-[162px] mq725:gap-[324px]">
       <main className="self-stretch flex flex-col items-end justify-start gap-[15px] shrink-0 [debug_commit:1de1738] max-w-full">
@@ -97,4 +97,4 @@ const SingleEvent22 = () => {
   );
 };
 
-export default SingleEvent22;
+export default RegistrationMessage;

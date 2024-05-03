@@ -1,8 +1,26 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../configs/firebase.config";
+import { useUserContext } from "../contexts/userProvider";
 
 const ProfilePersonal = () => {
+  const [currentUser, setCurrentUser] = useState()
   const navigate = useNavigate();
+  const {user, setUser} = useUserContext()
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+        if(user){
+            alert(JSON.stringify(user))
+            setCurrentUser(user)
+        }else{
+            //alert("No user session")
+        }
+    })
+  }, [])
 
   const onFrameContainerClick = useCallback(() => {
     navigate("/events");
@@ -80,6 +98,7 @@ const ProfilePersonal = () => {
           </div>
         </div>
       </div>
+      <Sidebar/>
       <div className="w-[1110px] h-14 relative bg-generic-white box-border overflow-hidden shrink-0 hidden max-w-full z-[3] text-sm text-neutral-600 border-b-[1px] border-solid border-neutral-300 border-l-[1px]">
         <div className="absolute top-[calc(50%_-_16px)] left-[700px] rounded-md box-border w-[286px] h-8 overflow-hidden border-[1px] border-solid border-neutral-300">
           <img
@@ -132,7 +151,7 @@ const ProfilePersonal = () => {
               <div className="self-stretch rounded-md bg-neutral-200 flex flex-row items-center justify-start py-3 px-4 border-[1px] border-solid border-neutral-300">
                 <input
                   className="w-[136px] [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400 text-left inline-block whitespace-nowrap p-0"
-                  placeholder="example@email.com"
+                  placeholder={currentUser != null ? currentUser?.email : null}
                   type="text"
                 />
               </div>
@@ -143,7 +162,7 @@ const ProfilePersonal = () => {
               </div>
               <div className="self-stretch rounded-md bg-neutral-200 flex flex-row items-center justify-start py-3 px-4 whitespace-nowrap text-sm border-[1px] border-solid border-neutral-300">
                 <div className="relative leading-[20px] inline-block min-w-[63px]">
-                  John Doe
+                  {currentUser !== null ? currentUser?.email : null}
                 </div>
               </div>
             </div>
@@ -160,78 +179,7 @@ const ProfilePersonal = () => {
           </div>
         </div>
       </section>
-      <header className="w-full !m-[0] absolute top-[0px] right-[0px] left-[0px] bg-primary-700 overflow-hidden flex flex-row items-start justify-start py-0 pr-0 pl-[50px] box-border max-w-full z-[2] text-left text-base text-generic-white font-paragraph-medium-medium mq750:pl-[25px] mq750:box-border">
-        <div className="w-[280px] flex flex-col items-start justify-start pt-[11px] px-0 pb-0 box-border">
-          <img
-            className="w-[131px] h-[34px] relative object-cover"
-            loading="lazy"
-            alt=""
-            src="/asset-4-1-11@2x.png"
-          />
-        </div>
-        <div className="flex-1 bg-primary-700 box-border overflow-hidden flex flex-row items-start justify-start py-[13px] px-6 max-w-full border-r-[1px] border-solid border-primary-600 border-l-[1px]">
-          <div
-            className="flex flex-row items-start justify-start gap-[12px] cursor-pointer"
-            onClick={onFrameContainerClick}
-          >
-            <img
-              className="h-[30px] w-[30px] relative rounded-81xl overflow-hidden shrink-0 min-h-[30px]"
-              alt=""
-              src="/frame-123-2.svg"
-            />
-            <div className="flex flex-col items-start justify-start pt-[3px] px-0 pb-0">
-              <div className="relative leading-[24px] font-medium inline-block min-w-[100px] whitespace-nowrap">
-                Personal info
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-[435px] bg-primary-700 overflow-hidden shrink-0 flex flex-row items-start justify-start py-3 px-6 box-border gap-[20px] max-w-full text-sm text-neutral-600">
-          <div className="w-[286px] rounded-md bg-generic-white overflow-hidden shrink-0 flex flex-row items-start justify-start pt-1.5 px-3 pb-[5.5px] box-border gap-[82px]">
-            <div className="flex flex-row items-start justify-start gap-[4px]">
-              <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
-                <input
-                  className="cursor-pointer m-0 w-[18px] h-[18px] relative overflow-hidden shrink-0"
-                  type="radio"
-                />
-              </div>
-              <div className="relative leading-[20px] inline-block min-w-[47px] whitespace-nowrap">{`Search `}</div>
-            </div>
-            <div className="flex flex-row items-start justify-start gap-[7px]">
-              <img
-                className="self-stretch w-px relative max-h-full min-h-[21px]"
-                alt=""
-                src="/queue-manager.svg"
-              />
-              <div className="flex flex-row items-start justify-start gap-[4px]">
-                <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
-                  <input
-                    className="cursor-pointer m-0 w-[18px] h-[18px] relative overflow-hidden shrink-0"
-                    type="radio"
-                  />
-                </div>
-                <div className="relative leading-[20px] inline-block min-w-[38px]">
-                  Abuja
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
-            <div className="flex flex-row items-start justify-start gap-[12px]">
-              <img
-                className="h-[30px] w-[30px] relative rounded-81xl overflow-hidden shrink-0 min-h-[30px]"
-                alt=""
-                src="/frame-12331.svg"
-              />
-              <img
-                className="h-[30px] w-[30px] relative rounded-[65.96px] overflow-hidden shrink-0 object-cover min-h-[30px]"
-                alt=""
-                src="/frame-74-5@2x.png"
-              />
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header pageName={"Personal details"}/>
     </div>
   );
 };

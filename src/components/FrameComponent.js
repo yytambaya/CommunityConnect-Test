@@ -26,6 +26,7 @@ const FrameComponent = () => {
         const res = await loginWithGoogle()
         if(res.status === 200){
             //alert('Logged in')
+            
             navigate("/app/events")
         }else{
           //alert('Error logging in')

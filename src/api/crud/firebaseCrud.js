@@ -15,7 +15,11 @@ export const addDocToFirestore = async (collectionName, payload) => {
 export const getDocFromFirestore = async (collectionName) => {
     try{
         const querySnapshot = (await getDocs(collection(db, collectionName)))
-        return {status: 200, message:'success', data: querySnapshot}
+        const data = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }))
+        return {status: 200, message:'success', data: data}
     }catch(error){
         return {status: 500, message: 'something went wrong', data: {error: error}}
     }

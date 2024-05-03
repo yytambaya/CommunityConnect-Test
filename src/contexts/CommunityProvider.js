@@ -1,10 +1,10 @@
-import { createContext } from "react"
+import { createContext, useContext } from "react"
 import { useState } from "react"
 
 export const CommunityContext = createContext()
 
-export const EventContextProvider = ({children}) => {
-    const [community, setCommunity] = useState(JSON.parse(localStorage.getItem('community')))
+export const CommunityContextProvider = ({children}) => {
+    const [community, setCommunity] = useState(null)
 
     return(
         <CommunityContext.Provider value={{community, setCommunity}} >
@@ -12,3 +12,4 @@ export const EventContextProvider = ({children}) => {
         </CommunityContext.Provider>    
     )
 }
+export const useCommunityContext = () => useContext(CommunityContext);

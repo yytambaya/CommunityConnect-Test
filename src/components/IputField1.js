@@ -20,9 +20,9 @@ const IputField = ({ label, placeholder, propWidth }) => {
           className="w-[33px] [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-primary-900 text-left inline-block p-0"
           placeholder="John"
           type="text"
-        >
-          {placeholder}
-        </input>
+        />
+          
+        
       </div>
     </div>
   );

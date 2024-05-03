@@ -11,19 +11,19 @@ import { storage } from "../../../configs/firebase.config";
 import { addDocToFirestore } from "../../../api/crud/firebaseCrud";
 import { EventContextProvider, useEventContext } from "../../../contexts/EventProvider";
 import Header from "../../../components/Header";
+import { eventRequestSchema } from "../../../validators/eventRequest.validation";
 
 
-
-const EditEvent = ({setPage, page}) => {
+const RequestEvent = ({setPage, page}) => {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState:{errors}} = useForm({ resolver: yupResolver(eventSchema)})
+  const { register, handleSubmit, formState:{errors}} = useForm({ resolver: yupResolver(eventRequestSchema)})
   const [freeTicketToggle, setFreeTicketToggle] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState([])
   const [error, setError] = useState('')
   const [categoryError, setCategoryError] = useState("")
   const [uploadedImage, setUploadedImage] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [actionButton, setActionButton] = useState("Update event")
+  const [actionButton, setActionButton] = useState("Submit request")
   const [imageURL, setImageURL] = useState("")
   const [imageURLAvailable, setImageURLAvailable] = useState(false)
   const [URLImageView, setURLImageView] = useState("")
@@ -31,34 +31,25 @@ const EditEvent = ({setPage, page}) => {
   
   const {event, setEvent} = useEventContext()
 
-  useEffect(() => {
+  /*useEffect(() => {
     //alert(imageURL)
     if(imageURL !== ""){
       uploadEvent()
     }
-  }, [imageURL])
+  }, [imageURL])*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     if(uploadedImage != null){
       setImageURLAvailable(true)
       setURLImageView(URL.createObjectURL(uploadedImage))
     }
-  }, [uploadedImage])
+  }, [uploadedImage])*/
 
-   useEffect(() => {
-    setSelectedCategories([...event.categories])
-    setURLImageView(event.imageURL)
-    setImageURLAvailable(true)
-   }, []) 
-
-   useEffect(() => {
-    alert('Image is set')
-   }, [URLImageView])
-  /*useEffect(() => {
+  useEffect(() => {
     if(event != null){
       setPage('EventPreview')
     }
-  }, [event])*/
+  }, [event])
 
   /*useEffect(() => {
     alert(selectedCategories)
@@ -94,23 +85,55 @@ const EditEvent = ({setPage, page}) => {
   }
 
   const onSubmit = async (data) => {
-    alert('Me')
+      //alert(JSON.stringify(data))
+      //alert('here')
       try{
+        //if(errors.title?.message == "" || errors.description?.message == ""){      
           setData(data)
+          const eventData = {
+            title: data.title, 
+            description: data.description, 
+            startDate: data.startDate,
+            endDate: data.endDate,
+            location: data.location,
+            privacy: data.privacy,
+            ticketFee: data.ticketFee,
+            ticketNumber: data.ticketNumber,
+            imageURL: URLImageView,
+            uploadedImage: uploadedImage,
+            categories : selectedCategories
+          }
+          uploadEvent()
+          //setEvent(eventData)
+        //}else{
+          //alert("No error")
+        //} 
+      }catch(e){
+        alert(e)
+      } 
+      /*if(selectedCategories.length === 0){
+        setCategoryError('category must be selected')
+        return
+      }*/
+      /*try{
+          
+          //setIsLoading(true)
           setActionButton('Loading...')
           await uploadImage('event', uploadedImage) 
           
       }catch(error){
           alert('error: ' + error)
           setError('something went wrong')
-      }
+      } */
+      //setActionButton("Create Account")
+      //navigate("/verification-message")
   }
 
   const uploadEvent = async ()=> {
     try{
       const collectionName = 'Event'
       const payload = { 
-          title: data.title, 
+          name: data.name, 
           description: data.description, 
           startDate: data.startDate,
           endDate: data.endDate,
@@ -118,8 +141,8 @@ const EditEvent = ({setPage, page}) => {
           privacy: data.privacy,
           ticketFee: data.ticketFee,
           ticketNumber: data.ticketNumber,
-          imageURL: imageURL,
-          categories : selectedCategories, 
+          categories : selectedCategories,
+          userId: currentUser.id, 
           status: 1,  
           dateCreated: Date.now(),
           dateUpdated: Date.now()
@@ -140,7 +163,7 @@ const EditEvent = ({setPage, page}) => {
         //alert('error: ' + error)
         setError('something went wrong')
     } 
-    setActionButton("Edit event")
+    setActionButton("Create Event")
     
   }
 
@@ -151,20 +174,19 @@ const EditEvent = ({setPage, page}) => {
   return (
     <div className="w-full relative bg-generic-white overflow-hidden flex flex-col items-start justify-start pt-0 px-0 pb-12 box-border gap-[24px] leading-[normal] tracking-[normal]">
       <Header/>
-      <section className="self-stretch flex flex-row items-start justify-center py-0 pr-[21px] pl-5 box-border max-w-full text-left text-base text-primary-900 font-paragraph-medium-medium">
+      <section className=" mt-24 self-stretch flex flex-row items-start justify-center py-0 pr-[21px] pl-5 box-border max-w-full text-left text-base text-primary-900 font-paragraph-medium-medium">
         <form onSubmit={handleSubmit(onSubmit)} className="w-[395px] flex flex-col items-start justify-start gap-[24px] max-w-full">
           <div className="self-stretch flex flex-row items-start justify-center py-0 px-5 text-5xl">
             <h2 className="m-0 relative text-inherit tracking-[-0.02em] leading-[32px] font-semibold font-inherit mq450:text-lgi mq450:leading-[26px]">
-              Edit event
+              Request for an event
             </h2>
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium inline-block min-w-[77px]">
-              Event title
+              Event name
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
-                defaultValue={event.title}
                 {...register("title")}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="Enter the name of your event"
@@ -178,7 +200,6 @@ const EditEvent = ({setPage, page}) => {
               Event description
             </div>
             <textarea
-               defaultValue={event.description} 
               {...register("description")}
               className="bg-neutral-100 h-[131px] w-auto [outline:none] self-stretch rounded-md box-border flex flex-row items-start justify-start py-2.5 px-4 font-paragraph-medium-medium text-sm  border-[1px] border-solid border-neutral-200"
               placeholder="Write about your event"
@@ -187,51 +208,12 @@ const EditEvent = ({setPage, page}) => {
             />
             {errors.description && <p className="text-red-500 -mt-2">{errors.description?.message}</p>}
           </div>
-          {/*<div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
-            <div className="flex flex-row items-start justify-start gap-[8px]">
-              <div className="relative leading-[24px] font-medium inline-block min-w-[118px]">
-                Invite Co-hosts
-              </div>
-              <div className="flex flex-col items-start justify-start pt-0.5 px-0 pb-0 text-xs text-neutral-600">
-                <div className="relative leading-[20px] font-medium inline-block min-w-[49px]">
-                  Optional
-                </div>
-              </div>
-            </div>
-            <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-[3px] px-4 gap-[8px] text-sm text-generic-white border-[1px] border-solid border-neutral-200">
-              <div className="rounded-[25px] bg-generic-white overflow-x-auto flex flex-row items-start justify-start py-1 px-1.5 gap-[7px]">
-                <div className="h-[30px] w-[30px] rounded-81xl bg-primary-500 overflow-hidden shrink-0 flex flex-row items-start justify-start p-[5px] box-border">
-                  <div className="relative leading-[20px] font-medium inline-block min-w-[20px]">
-                    KA
-                  </div>
-                </div>
-                <div className="flex flex-col items-start justify-start pt-[5px] px-0 pb-0 text-black">
-                  <div className="relative leading-[20px] inline-block min-w-[89px]">
-                    Khairat Adam
-                  </div>
-                </div>
-                <div className="flex flex-col items-start justify-start pt-[5px] px-0 pb-0">
-                  <img
-                    className="w-5 h-5 relative overflow-hidden shrink-0"
-                    alt=""
-                    src="/frame-21.svg"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col items-start justify-start pt-[5px] px-0 pb-0 text-lg text-primary-500">
-                <div className="relative leading-[28px] font-medium inline-block min-w-[7px]">
-                  |
-                </div>
-              </div>
-            </div>
-          </div>*/}
           <div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
             <div className="relative leading-[24px] font-medium">
-              When does your event starts?
+              Preferred date
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-between py-3 pr-[17px] pl-[15px] whitespace-nowrap gap-[20px] text-sm  border-[1px] border-solid border-neutral-200">
                 <input
-                defaultValue={"2022/04/02"}
                 {...register("startDate")}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400  text-left inline-block p-0"
                 placeholder="choose date"
@@ -242,11 +224,10 @@ const EditEvent = ({setPage, page}) => {
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
             <div className="relative leading-[24px] font-medium">
-              When does your event ends?
+              Preferred time
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-between py-3 pr-[17px] pl-[15px] whitespace-nowrap gap-[20px] text-sm  border-[1px] border-solid border-neutral-200">
                 <input
-                defaultValue= {"04-03-2024"}    
                 {...register("endDate")}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-neutral-400 text-left inline-block p-0"
                 placeholder="choose date"
@@ -257,13 +238,11 @@ const EditEvent = ({setPage, page}) => {
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium inline-block min-w-[109px]">
-              Event location
+              Location preference
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
-                
                 {...register("location")}
-                defaultValue={event.location}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="Where is your event located?"
                 type="text"
@@ -277,7 +256,7 @@ const EditEvent = ({setPage, page}) => {
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-between py-2 gap-[20px] text-sm text-neutral-800 border-[1px] border-solid border-neutral-200">
               <div className="w-full flex flex-col items-start justify-center">
-                <select {...register("privacy")} defaultValue={event.privacy} className="w-full bg-neutral-100 outline-none relative leading-[20px] inline-block min-w-[41px]">
+                <select {...register("privacy")} className="w-full bg-neutral-100 outline-none relative leading-[20px] inline-block min-w-[41px]">
                   <option value="public">Public</option>
                   <option value="private">Private</option>
                 </select>
@@ -291,12 +270,12 @@ const EditEvent = ({setPage, page}) => {
           
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium inline-block min-w-[77px]">
-              How much do you want to charge per ticket?
+              Enter your budget
             </div>
             {!freeTicketToggle && <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
                 {...register("ticketFee")}
-                defaultValue={event.ticketFee}
+                defaultValue={0.0}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="0.00"
                 type="number"
@@ -324,7 +303,6 @@ const EditEvent = ({setPage, page}) => {
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
                 {...register("ticketNumber")}
-                defaultValue={event.ticketNumber}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="0"
                 type="number"
@@ -333,30 +311,28 @@ const EditEvent = ({setPage, page}) => {
             {errors.ticketNumber && <p className="text-red-500 -mt-2">{errors.ticketNumber?.message}</p>}
           </div>
 
-          <div className="w-full h-[167px] flex flex-col items-start justify-start gap-[12px] max-w-full">
-  <div className="relative leading-[24px] font-medium">
-    Upload your event poster/ cover image
-  </div>
+         {/*} <div className="w-full h-[167px] flex flex-col items-start justify-start gap-[12px] max-w-full">
+            <div className="relative leading-[24px] font-medium">
+              Upload your event poster/ cover image
+            </div>
  
- {!imageURLAvailable && (
-   <div className="w-full cursor-pointer self-stretch flex-1 rounded-md bg-neutral-100 flex items-center justify-center py-2.5 px-4 border-[1px] border-solid border-neutral-200 relative">
-     <label htmlFor="upload-input" className="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center">
-       <img
-         className="h-6 w-6 z-20 shrink-0"
-         alt=""
-         src="/frame-6.svg"
-       />
-     </label>
-     <input id="upload-input" onChange={(e)=> setUploadedImage(e.target.files[0])} type="file" className="cursor-pointer opacity-0 absolute h-full w-full z-50"/>
-     {errors.image && <p className="text-red-500 -mt-2">{errors.ticketNumber?.message}</p>}
-   </div>
- )}
 
-  {imageURLAvailable && <div className="">
-    <img className="w-36 h-36" src={URLImageView}/>
-    <button className=" py-2 px-4" onClick={() => {setURLImageView(""); setImageURLAvailable(false)}}>delete</button>
-    </div>}
-</div>
+          {!imageURLAvailable && (
+            <div className="w-full cursor-pointer self-stretch flex-1 rounded-md bg-neutral-100 flex items-center justify-center py-2.5 px-4 border-[1px] border-solid border-neutral-200 relative">
+              <label htmlFor="upload-input" className="absolute left-0 right-0 top-0 bottom-0 flex items-center justify-center">
+                <img
+                  className="h-6 w-6 z-20 shrink-0"
+                  alt=""
+                  src="/frame-6.svg"
+                />
+              </label>
+              <input id="upload-input" onChange={(e)=> setUploadedImage(e.target.files[0])} type="file" className="cursor-pointer opacity-0 absolute h-full w-full z-50"/>
+              {errors.image && <p className="text-red-500 -mt-2">{errors.ticketNumber?.message}</p>}
+            </div>
+          )}
+
+            {imageURLAvailable && <img className=" w-36 h-36" src={URLImageView}/>}
+          </div>*/}
 
           {/*<div className="w-full h-[167px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium">
@@ -375,11 +351,24 @@ const EditEvent = ({setPage, page}) => {
             </div>}
             {imageURLAvailable && <img className=" w-6 h-6" src=""/>}
           </div>*/}
-          <div className="w-full mt-8 self-stretch flex flex-row items-start justify-start pt-0 px-0 pb-1.5 box-border max-w-full text-sm">
+          <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
+            <div className="relative leading-[24px] font-medium">
+              Specific requirements or preferences
+            </div>
+            <textarea
+              {...register("moreInfo")}
+              className="bg-neutral-100 h-[131px] w-auto [outline:none] self-stretch rounded-md box-border flex flex-row items-start justify-start py-2.5 px-4 font-paragraph-medium-medium text-sm  border-[1px] border-solid border-neutral-200"
+              placeholder="Let use know and we will do our best"
+              rows={7}
+              cols={19}
+            />
+            {errors.moreInfo && <p className="text-red-500 -mt-2">{errors.description?.message}</p>}
+          </div>
+          <div className="w-full self-stretch flex flex-row items-start justify-start pt-0 px-0 pb-1.5 box-border max-w-full text-sm">
             <div className="w-full flex-1 flex flex-col items-start justify-start gap-[12px] max-w-full">
               <div className="flex flex-row items-center justify-start">
                 <div className="relative leading-[20px] font-medium">
-                  Select the categories your event belong to
+                  Select the categories your event belong to accommodate
                 </div>
               </div>
               <div className="w-full self-stretch flex flex-col items-start justify-start gap-[12px]">
@@ -419,4 +408,4 @@ const EditEvent = ({setPage, page}) => {
   );
 };
 
-export default EditEvent;
+export default RequestEvent;

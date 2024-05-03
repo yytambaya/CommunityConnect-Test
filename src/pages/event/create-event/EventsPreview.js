@@ -6,6 +6,7 @@ import EditEvent from "./EditEvent";
 import { addDocToFirestore } from "../../../api/crud/firebaseCrud";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../../configs/firebase.config";
+import Header from "../../../components/Header";
 
 const EventPreview = ({page, setPage}) => {
   const [dbImageURL, setDBImageURL] = useState("")
@@ -127,8 +128,8 @@ const uploadImage = async (path, uploadedImage) => {
         alt=""
         src="/image-3@2x.png"
       />
-      <TopBar />
-      <main className="w-[1401px] flex flex-row items-start justify-end py-0 px-8 box-border max-w-full">
+      <Header/>
+      <main className=" mt-24 w-[1401px] flex flex-row items-start justify-end py-0 px-8 box-border max-w-full">
         <section className="flex-1 flex flex-col items-start justify-start gap-[24px] max-w-full text-left text-5xl text-primary-900 font-paragraph-medium-medium">
           <div className="flex flex-col items-start justify-start gap-[6px] text-13xl">
             <h1 className="m-0 relative text-inherit font-bold font-inherit mq450:text-lgi mq750:text-[26px]">

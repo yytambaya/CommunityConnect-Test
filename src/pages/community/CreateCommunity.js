@@ -1,35 +1,47 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { eventSchema } from "../../../validators/event.validator";
 import { useForm } from "react-hook-form";
 import { useFormContext } from "react-hook-form";
-import { events } from "../../../data/event.data";
-import { uploadFile } from "../../../api/storage/storage";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../../../configs/firebase.config";
-import { addDocToFirestore } from "../../../api/crud/firebaseCrud";
-import { EventContextProvider, useEventContext } from "../../../contexts/EventProvider";
-import Header from "../../../components/Header";
+import { auth, storage } from "../../configs/firebase.config";
+import Header from "../../components/Header";
+import { addDocToFirestore } from "../../api/crud/firebaseCrud";
+import { communitySchema } from "../../validators/community.validation";
+import { events } from "../../data/event.data";
+import { community } from "../../data/community.data";
+import { onAuthStateChanged } from "firebase/auth";
 
 
 
-const EditEvent = ({setPage, page}) => {
+const CreateCommunity = ({setPage, page}) => {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState:{errors}} = useForm({ resolver: yupResolver(eventSchema)})
+  const { register, handleSubmit, formState:{errors}} = useForm({ resolver: yupResolver(communitySchema)})
+  const [currentUser, setCurrentUser] = useState(null)
   const [freeTicketToggle, setFreeTicketToggle] = useState(false)
   const [selectedCategories, setSelectedCategories] = useState([])
   const [error, setError] = useState('')
   const [categoryError, setCategoryError] = useState("")
   const [uploadedImage, setUploadedImage] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [actionButton, setActionButton] = useState("Update event")
+  const [actionButton, setActionButton] = useState("Create community")
   const [imageURL, setImageURL] = useState("")
   const [imageURLAvailable, setImageURLAvailable] = useState(false)
   const [URLImageView, setURLImageView] = useState("")
   const [data, setData] = useState(null)
   
-  const {event, setEvent} = useEventContext()
+  //const {event, setEvent} = useEventContext()
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+        if(user){
+            //alert("user logged in: " + user.uid)
+            setCurrentUser(user)
+        }else{
+            //alert("No user session")
+        }
+    })
+  }, [])
 
   useEffect(() => {
     //alert(imageURL)
@@ -45,15 +57,6 @@ const EditEvent = ({setPage, page}) => {
     }
   }, [uploadedImage])
 
-   useEffect(() => {
-    setSelectedCategories([...event.categories])
-    setURLImageView(event.imageURL)
-    setImageURLAvailable(true)
-   }, []) 
-
-   useEffect(() => {
-    alert('Image is set')
-   }, [URLImageView])
   /*useEffect(() => {
     if(event != null){
       setPage('EventPreview')
@@ -66,7 +69,7 @@ const EditEvent = ({setPage, page}) => {
 
 
   const uploadImage = async (path, uploadedImage) => {
-    const storageRef = ref(storage, `files/${path}`);
+    const storageRef = ref(storage, `files/${path}/${new Date()}`);
     const uploadTask = uploadBytesResumable(storageRef, uploadedImage);
   
     uploadTask.on("state_changed",
@@ -94,31 +97,65 @@ const EditEvent = ({setPage, page}) => {
   }
 
   const onSubmit = async (data) => {
-    alert('Me')
+      //alert(JSON.stringify(data))
+      //alert('here')
       try{
+        //if(errors.name?.message == "" || errors.description?.message == ""){      
           setData(data)
+          const eventData = {
+            name: data.name, 
+            description: data.description, 
+            startDate: data.startDate,
+            endDate: data.endDate,
+            location: data.location,
+            privacy: data.privacy,
+            ticketFee: data.ticketFee,
+            ticketNumber: data.ticketNumber,
+            imageURL: URLImageView,
+            uploadedImage: uploadedImage,
+            categories : selectedCategories,
+            userId: currentUser.uid
+          }
+          setActionButton('Loading...')
+          const path = "community"
+          await uploadImage(path, uploadImage)
+          //setEvent(eventData)
+        //}else{
+          //alert("No error")
+        //} 
+      }catch(e){
+        alert(e)
+      } 
+      /*if(selectedCategories.length === 0){
+        setCategoryError('category must be selected')
+        return
+      }*/
+      /*try{
+          
+          //setIsLoading(true)
           setActionButton('Loading...')
           await uploadImage('event', uploadedImage) 
           
       }catch(error){
           alert('error: ' + error)
           setError('something went wrong')
-      }
+      } */
+      //setActionButton("Create Account")
+      //navigate("/verification-message")
   }
 
   const uploadEvent = async ()=> {
     try{
-      const collectionName = 'Event'
+        alert("To update event")
+      const collectionName = 'Community'
       const payload = { 
-          title: data.title, 
+          name: data.name, 
           description: data.description, 
-          startDate: data.startDate,
-          endDate: data.endDate,
           location: data.location,
           privacy: data.privacy,
-          ticketFee: data.ticketFee,
-          ticketNumber: data.ticketNumber,
+          membershipFee: data.ticketFee,
           imageURL: imageURL,
+          userId: currentUser.uid,
           categories : selectedCategories, 
           status: 1,  
           dateCreated: Date.now(),
@@ -130,17 +167,18 @@ const EditEvent = ({setPage, page}) => {
         const res = await addDocToFirestore(collectionName, payload)
         if(res.status === 200){
             //setNotification(true)
-            navigate('/app/event/event-preview')
+            alert('Community created')
+            navigate('/app/event/community')
         }else{
             setError('something went wrong')
             //setError(res.message)
         }
       
     }catch(error){
-        //alert('error: ' + error)
+        alert('error: ' + error)
         setError('something went wrong')
     } 
-    setActionButton("Edit event")
+    setActionButton("Create community")
     
   }
 
@@ -151,34 +189,32 @@ const EditEvent = ({setPage, page}) => {
   return (
     <div className="w-full relative bg-generic-white overflow-hidden flex flex-col items-start justify-start pt-0 px-0 pb-12 box-border gap-[24px] leading-[normal] tracking-[normal]">
       <Header/>
-      <section className="self-stretch flex flex-row items-start justify-center py-0 pr-[21px] pl-5 box-border max-w-full text-left text-base text-primary-900 font-paragraph-medium-medium">
+      <section className=" mt-24 self-stretch flex flex-row items-start justify-center py-0 pr-[21px] pl-5 box-border max-w-full text-left text-base text-primary-900 font-paragraph-medium-medium">
         <form onSubmit={handleSubmit(onSubmit)} className="w-[395px] flex flex-col items-start justify-start gap-[24px] max-w-full">
           <div className="self-stretch flex flex-row items-start justify-center py-0 px-5 text-5xl">
             <h2 className="m-0 relative text-inherit tracking-[-0.02em] leading-[32px] font-semibold font-inherit mq450:text-lgi mq450:leading-[26px]">
-              Edit event
+              Create Community
             </h2>
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium inline-block min-w-[77px]">
-              Event title
+              Community name
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
-                defaultValue={event.title}
-                {...register("title")}
+                {...register("name")}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="Enter the name of your event"
                 type="text"
               />
             </div>
-            {errors.title && <p className="text-red-500 -mt-2">{errors.title?.message}</p>}
+            {errors.name && <p className="text-red-500 -mt-2">{errors.name?.message}</p>}
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium">
-              Event description
+              Community description
             </div>
             <textarea
-               defaultValue={event.description} 
               {...register("description")}
               className="bg-neutral-100 h-[131px] w-auto [outline:none] self-stretch rounded-md box-border flex flex-row items-start justify-start py-2.5 px-4 font-paragraph-medium-medium text-sm  border-[1px] border-solid border-neutral-200"
               placeholder="Write about your event"
@@ -225,13 +261,12 @@ const EditEvent = ({setPage, page}) => {
               </div>
             </div>
           </div>*/}
-          <div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
+          {/*<div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
             <div className="relative leading-[24px] font-medium">
               When does your event starts?
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-between py-3 pr-[17px] pl-[15px] whitespace-nowrap gap-[20px] text-sm  border-[1px] border-solid border-neutral-200">
                 <input
-                defaultValue={"2022/04/02"}
                 {...register("startDate")}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px] text-neutral-400  text-left inline-block p-0"
                 placeholder="choose date"
@@ -239,14 +274,13 @@ const EditEvent = ({setPage, page}) => {
               />
             </div>
             {errors.startDate && <p className="text-red-500 -mt-2">{errors.startDate?.message}</p>}
-          </div>
-          <div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
+          </div>*/}
+          {/*<div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
             <div className="relative leading-[24px] font-medium">
               When does your event ends?
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-between py-3 pr-[17px] pl-[15px] whitespace-nowrap gap-[20px] text-sm  border-[1px] border-solid border-neutral-200">
                 <input
-                defaultValue= {"04-03-2024"}    
                 {...register("endDate")}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-neutral-400 text-left inline-block p-0"
                 placeholder="choose date"
@@ -254,16 +288,14 @@ const EditEvent = ({setPage, page}) => {
               />
             </div>
             {errors.endDate && <p className="text-red-500 -mt-2">{errors.endDate?.message}</p>}
-          </div>
+            </div>*/}
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium inline-block min-w-[109px]">
-              Event location
+              Community location
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
-                
                 {...register("location")}
-                defaultValue={event.location}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="Where is your event located?"
                 type="text"
@@ -273,11 +305,11 @@ const EditEvent = ({setPage, page}) => {
           </div>
           <div className="w-[380px] flex flex-col items-start justify-start gap-[6px] max-w-full">
             <div className="relative leading-[24px] font-medium inline-block min-w-[104px]">
-              Event privacy
+              Community privacy
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-center justify-between py-2 gap-[20px] text-sm text-neutral-800 border-[1px] border-solid border-neutral-200">
               <div className="w-full flex flex-col items-start justify-center">
-                <select {...register("privacy")} defaultValue={event.privacy} className="w-full bg-neutral-100 outline-none relative leading-[20px] inline-block min-w-[41px]">
+                <select {...register("privacy")} className="w-full bg-neutral-100 outline-none relative leading-[20px] inline-block min-w-[41px]">
                   <option value="public">Public</option>
                   <option value="private">Private</option>
                 </select>
@@ -291,12 +323,12 @@ const EditEvent = ({setPage, page}) => {
           
           <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium inline-block min-w-[77px]">
-              How much do you want to charge per ticket?
+              How much do you want to for membership?
             </div>
             {!freeTicketToggle && <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
                 {...register("ticketFee")}
-                defaultValue={event.ticketFee}
+                defaultValue={0.0}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="0.00"
                 type="number"
@@ -310,28 +342,27 @@ const EditEvent = ({setPage, page}) => {
                 } 
               </div>
               <div className="relative leading-[20px] font-medium inline-block min-w-[105px]">
-                Tickets are free
+                Membership is free
               </div>
             </div>
             {errors.ticketFee && <p className="text-red-500 -mt-2">{errors.ticketFee?.message}</p>}
           </div>
 
           
-          <div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
+          {/*<div className="w-[380px] flex flex-col items-start justify-start gap-[12px] max-w-full">
             <div className="relative leading-[24px] font-medium inline-block min-w-[77px]">
               How many tickets do you want to sell?
             </div>
             <div className="self-stretch rounded-md bg-neutral-100 flex flex-row items-start justify-start py-3 px-4 border-[1px] border-solid border-neutral-200">
               <input
                 {...register("ticketNumber")}
-                defaultValue={event.ticketNumber}
                 className="w-full [border:none] [outline:none] font-paragraph-medium-medium text-sm bg-[transparent] h-5 relative leading-[20px]  text-left inline-block p-0"
                 placeholder="0"
                 type="number"
               />
             </div>
             {errors.ticketNumber && <p className="text-red-500 -mt-2">{errors.ticketNumber?.message}</p>}
-          </div>
+          </div>*/}
 
           <div className="w-full h-[167px] flex flex-col items-start justify-start gap-[12px] max-w-full">
   <div className="relative leading-[24px] font-medium">
@@ -352,10 +383,7 @@ const EditEvent = ({setPage, page}) => {
    </div>
  )}
 
-  {imageURLAvailable && <div className="">
-    <img className="w-36 h-36" src={URLImageView}/>
-    <button className=" py-2 px-4" onClick={() => {setURLImageView(""); setImageURLAvailable(false)}}>delete</button>
-    </div>}
+  {imageURLAvailable && <img className=" w-36 h-36" src={URLImageView}/>}
 </div>
 
           {/*<div className="w-full h-[167px] flex flex-col items-start justify-start gap-[12px] max-w-full">
@@ -375,16 +403,16 @@ const EditEvent = ({setPage, page}) => {
             </div>}
             {imageURLAvailable && <img className=" w-6 h-6" src=""/>}
           </div>*/}
-          <div className="w-full mt-8 self-stretch flex flex-row items-start justify-start pt-0 px-0 pb-1.5 box-border max-w-full text-sm">
+          <div className="w-full self-stretch flex flex-row items-start justify-start pt-0 px-0 pb-1.5 box-border max-w-full text-sm">
             <div className="w-full flex-1 flex flex-col items-start justify-start gap-[12px] max-w-full">
               <div className="flex flex-row items-center justify-start">
                 <div className="relative leading-[20px] font-medium">
-                  Select the categories your event belong to
+                  Select the categories your community belongs to
                 </div>
               </div>
               <div className="w-full self-stretch flex flex-col items-start justify-start gap-[12px]">
                 <div className="w-full flex flex-row items-start justify-start gap-[11px] mq450:flex-wrap">
-                  {events.categories.map((cat, i) =>
+                  {community.categories.map((cat, i) =>
                     <button key={i} {...register('categories')} onClick={(e) => { e.preventDefault(); if(!selectedCategories.includes(cat)) {setSelectedCategories([...selectedCategories, cat])}}} className={` w-96 flex-1 cursor-pointer [border:none] py-[5px] px-3 bg-neutral-100 rounded-xl flex flex-row items-center justify-start ${selectedCategories.includes(cat) ? 'bg-neutral-300' : null} hover:bg-gainsboro-300`}>
                       <div className={`relative text-xs leading-[20px] font-medium font-paragraph-medium-medium text-primary-500 text-left flex-1 w-full`}>
                         {cat}
@@ -419,4 +447,4 @@ const EditEvent = ({setPage, page}) => {
   );
 };
 
-export default EditEvent;
+export default CreateCommunity;

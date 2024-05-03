@@ -1,8 +1,45 @@
-import FrameComponent1 from "../components/FrameComponent11";
-import FrameComponent from "../components/FrameComponent6";
-import TopBar from "../components/TopBar2";
+import { useEffect, useState } from "react";
+import FrameComponent1 from "../../components/FrameComponent11";
+import FrameComponent from "../../components/FrameComponent6";
+import TopBar from "../../components/TopBar2";
+import { getDocFromFirestore } from "../../api/crud/firebaseCrud";
+import { useCommunityContext } from "../../contexts/CommunityProvider";
 
-const CommunityView = () => {
+const CommunityView = ({setPage, page}) => {
+  const [communities, setCommunities] = useState([])
+  const [error, setError] = useState("")
+  //const {community, setCommunity} = useCommunityContext()
+
+
+  useEffect(() => {
+    getCommunities()
+  }, [])
+
+  /*useEffect(() => {
+    alert(events)
+  }, [events])*/
+
+  const getCommunities = async () => {
+    const collectionName = "Community"
+    const res = await getDocFromFirestore(collectionName)
+    if(res.status == 200){
+      //alert("Success")
+      alert(JSON.stringify(res.data))
+      setCommunities(res.data)
+      
+    }else{
+      //alert("Error")
+      setError(res.message)
+    }
+
+  }
+
+  const handleCLick = (event) => {
+    s//etCommunity(event)
+    //setPage("SingleEvent")
+  }
+
+
   return (
     <div className="w-full relative bg-generic-white overflow-hidden flex flex-col items-start justify-start leading-[normal] tracking-[normal] text-left text-xl text-neutral-900 font-paragraph-medium-medium">
       <img
